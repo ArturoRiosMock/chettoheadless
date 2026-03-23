@@ -3,13 +3,17 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-import Image from "next/image";
+import CmsImage from "@/components/ui/CmsImage";
 import Button from "@/components/ui/Button";
-import { HERO_SLIDES } from "@/data/mock";
+import type { HeroSlide } from "@/types";
 import "swiper/css";
 import "swiper/css/pagination";
 
-export default function HeroSlider() {
+interface HeroSliderProps {
+  slides: HeroSlide[];
+}
+
+export default function HeroSlider({ slides }: HeroSliderProps) {
   return (
     <section className="relative">
       <Swiper
@@ -21,23 +25,28 @@ export default function HeroSlider() {
         pagination={{
           clickable: true,
           el: ".hero-pagination",
-          bulletClass: "inline-block h-2 w-2 rounded-full bg-white/50 cursor-pointer transition-all",
+          bulletClass:
+            "inline-block h-2 w-2 rounded-full bg-white/50 cursor-pointer transition-all",
           bulletActiveClass: "!w-8 !bg-white",
         }}
         autoplay={{ delay: 6000, disableOnInteraction: false }}
         loop
         className="h-[600px]"
       >
-        {HERO_SLIDES.map((slide) => (
+        {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
             <div className="relative h-full">
-              <Image
-                src={slide.image}
-                alt={slide.title}
-                fill
-                className="object-cover"
-                priority
-              />
+              {slide.image ? (
+                <CmsImage
+                  src={slide.image}
+                  alt={slide.title}
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              ) : (
+                <div className="h-full bg-neutral-800" />
+              )}
               <div className="absolute inset-0 bg-black/40" />
               <div className="absolute inset-0 flex items-center">
                 <div className="mx-auto max-w-[1354px] w-full px-6">
@@ -55,7 +64,11 @@ export default function HeroSlider() {
                       {slide.description}
                     </p>
                     <div className="mt-8">
-                      <Button href={slide.ctaLink} size="lg" className="gap-2">
+                      <Button
+                        href={slide.ctaLink}
+                        size="lg"
+                        className="gap-2"
+                      >
                         {slide.cta}
                         <ArrowRight className="h-5 w-5" />
                       </Button>

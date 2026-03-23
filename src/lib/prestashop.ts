@@ -1,4 +1,4 @@
-import type { Product, Category } from "@/types";
+import type { Product, Category, HomepageContent } from "@/types";
 
 /**
  * PrestaShop Webservice API client.
@@ -43,6 +43,19 @@ class PrestashopClient {
   async getCategories(): Promise<Category[]> {
     const data = await this.#fetch("categories&display=full");
     return data.categories.map(mapPrestashopCategory);
+  }
+
+  async getHomepageContent(): Promise<HomepageContent> {
+    const url = `${this.#baseUrl}/index.php?fc=module&module=chettoheadless&controller=api`;
+    const response = await fetch(url, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`CMS API error: ${response.status}`);
+    }
+
+    return response.json();
   }
 }
 

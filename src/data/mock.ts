@@ -29,7 +29,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     description: "Calzado barefoot de calidad a precios únicos",
     cta: "Ver Ofertas",
     ctaLink: "/ofertas",
-    image: "https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?w=1400&h=600&fit=crop",
+    image: "/images/hero-home.png",
   },
   {
     id: 2,
@@ -39,7 +39,7 @@ export const HERO_SLIDES: HeroSlide[] = [
     description: "Descubre los nuevos modelos de temporada",
     cta: "Explorar",
     ctaLink: "/colecciones/sneakers",
-    image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=1400&h=600&fit=crop",
+    image: "/images/hero-slide-2.png",
   },
 ];
 
@@ -75,21 +75,21 @@ export const CATEGORIES: Category[] = [
     id: 1,
     name: "Sneakers",
     description: "Versatilidad diaria",
-    image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=420&h=560&fit=crop",
+    image: "/images/cat-sneakers.png",
     slug: "sneakers",
   },
   {
     id: 2,
     name: "Sandalias",
     description: "Para el verano",
-    image: "https://images.unsplash.com/photo-1603487742131-4160ec999306?w=420&h=560&fit=crop",
+    image: "/images/cat-sandalias.png",
     slug: "sandalias",
   },
   {
     id: 3,
     name: "Casual",
     description: "Estilo clásico",
-    image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=420&h=560&fit=crop",
+    image: "/images/cat-casual.png",
     slug: "casual",
   },
 ];

@@ -1,12 +1,16 @@
 import CategoryCard from "@/components/ui/CategoryCard";
-import { CATEGORIES } from "@/data/mock";
+import type { Category } from "@/types";
 
-export default function CategoriesGrid() {
+interface CategoriesGridProps {
+  categories: Category[];
+}
+
+export default function CategoriesGrid({ categories }: CategoriesGridProps) {
   return (
     <section className="py-12">
       <div className="mx-auto max-w-[1354px] px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <CategoryCard key={category.id} category={category} />
           ))}
         </div>

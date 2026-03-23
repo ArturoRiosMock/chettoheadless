@@ -1,20 +1,45 @@
-import { Truck, RotateCcw, ShieldCheck, CreditCard } from "lucide-react";
-import { BENEFITS } from "@/data/mock";
+import {
+  Truck,
+  RotateCcw,
+  ShieldCheck,
+  CreditCard,
+  Heart,
+  Star,
+  Package,
+  Clock,
+  Award,
+  Zap,
+  Gift,
+  ThumbsUp,
+} from "lucide-react";
+import type { Benefit } from "@/types";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Truck,
   RotateCcw,
   ShieldCheck,
   CreditCard,
+  Heart,
+  Star,
+  Package,
+  Clock,
+  Award,
+  Zap,
+  Gift,
+  ThumbsUp,
 };
 
-export default function BenefitsBar() {
+interface BenefitsBarProps {
+  benefits: Benefit[];
+}
+
+export default function BenefitsBar({ benefits }: BenefitsBarProps) {
   return (
     <section className="border-b border-neutral-200 bg-neutral-50">
       <div className="mx-auto max-w-[1354px] px-6 py-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {BENEFITS.map((benefit) => {
-            const Icon = ICON_MAP[benefit.icon];
+          {benefits.map((benefit) => {
+            const Icon = ICON_MAP[benefit.icon] || ShieldCheck;
             return (
               <div key={benefit.id} className="flex items-center gap-4">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-neutral-950 text-white">

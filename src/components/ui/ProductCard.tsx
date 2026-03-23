@@ -1,4 +1,4 @@
-import Image from "next/image";
+import CmsImage from "@/components/ui/CmsImage";
 import Link from "next/link";
 import Badge from "./Badge";
 import type { Product } from "@/types";
@@ -12,13 +12,17 @@ export default function ProductCard({ product, showColors = true }: ProductCardP
   return (
     <Link href={`/producto/${product.slug}`} className="group block">
       <div className="relative overflow-hidden rounded-xl bg-neutral-100 aspect-[3/4]">
-        <Image
-          src={product.image}
-          alt={product.name}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 768px) 50vw, 25vw"
-        />
+        {product.image ? (
+          <CmsImage
+            src={product.image}
+            alt={product.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 50vw, 25vw"
+          />
+        ) : (
+          <div className="h-full w-full bg-neutral-200" />
+        )}
         {product.badge && (
           <div className="absolute top-4 left-4">
             <Badge variant="new">{product.badge}</Badge>

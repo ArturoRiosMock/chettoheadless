@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { useState } from "react";
 import { FOOTER_COLUMNS } from "@/data/mock";
@@ -47,8 +48,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand info */}
           <div className="lg:col-span-2">
-            <Link href="/" className="text-2xl font-black tracking-tight">
-              CHETTO
+            <Link href="/">
+              <Image
+                src="/images/logo-chetto.png"
+                alt="Chetto - Barefoot Shoes"
+                width={95}
+                height={64}
+                className="h-14 w-auto brightness-0 invert"
+              />
             </Link>
             <p className="mt-4 text-sm text-neutral-400 max-w-sm leading-relaxed">
               Calzado respetuoso para el desarrollo natural de los pies de tu

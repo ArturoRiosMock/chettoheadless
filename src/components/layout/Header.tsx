@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Search, User, Heart, ShoppingBag } from "lucide-react";
 import { useState } from "react";
 
@@ -11,9 +12,14 @@ export default function Header() {
     <header className="border-b border-neutral-200 bg-white">
       <div className="mx-auto max-w-[1354px] px-6 flex items-center justify-between h-[96px]">
         <Link href="/" className="shrink-0">
-          <span className="text-3xl font-black tracking-tight text-neutral-950">
-            CHETTO
-          </span>
+          <Image
+            src="/images/logo-chetto.png"
+            alt="Chetto - Barefoot Shoes"
+            width={115}
+            height={80}
+            className="h-16 w-auto"
+            priority
+          />
         </Link>
 
         <div className="relative mx-8 flex-1 max-w-[672px]">

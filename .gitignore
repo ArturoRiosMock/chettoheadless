@@ -38,3 +38,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# docker
+docker-data/
+
+# uploaded CMS images (generated at runtime)
+modules/chettoheadless/views/img/slides/
+modules/chettoheadless/views/img/categories/
+modules/chettoheadless/views/img/products/
+modules/chettoheadless/views/img/sections/
+
+# cursor
+.cursor/

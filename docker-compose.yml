@@ -1,0 +1,64 @@
+services:
+  mysql:
+    container_name: chetto-mysql
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: prestashop
+    networks:
+      - chetto_network
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  prestashop:
+    container_name: chetto-prestashop
+    image: prestashop/prestashop:latest
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - 8080:80
+    environment:
+      DB_SERVER: chetto-mysql
+      DB_NAME: prestashop
+      DB_USER: root
+      DB_PASSWD: admin
+      PS_INSTALL_AUTO: 1
+      PS_DOMAIN: localhost:8080
+      PS_LANGUAGE: es
+      PS_COUNTRY: es
+      PS_DEMO_MODE: 1
+      PS_DEV_MODE: 1
+      ADMIN_MAIL: admin@chetto.es
+      ADMIN_PASSWD: Chetto2026!
+      PS_FOLDER_ADMIN: admin-chetto
+      PS_FOLDER_INSTALL: install-chetto
+    networks:
+      - chetto_network
+    volumes:
+      - psdata:/var/www/html
+      - ./scripts:/var/www/html/scripts
+      - ./modules/chettoheadless:/var/www/html/modules/chettoheadless
+
+  phpmyadmin:
+    container_name: chetto-phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: chetto-mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - 8081:80
+    networks:
+      - chetto_network
+
+networks:
+  chetto_network:
+
+volumes:
+  psdata:
+  dbdata:

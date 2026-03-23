@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 
-export default function Newsletter() {
+interface NewsletterProps {
+  title: string;
+  description: string;
+}
+
+export default function Newsletter({ title, description }: NewsletterProps) {
   const [email, setEmail] = useState("");
 
   return (
@@ -10,12 +15,8 @@ export default function Newsletter() {
       <div className="mx-auto max-w-[1354px] px-6">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
           <div>
-            <h3 className="text-2xl font-bold text-neutral-950">
-              Únete a la familia barefoot
-            </h3>
-            <p className="mt-2 text-neutral-500">
-              Recibe consejos, guías y ofertas exclusivas sobre calzado barefoot
-            </p>
+            <h3 className="text-2xl font-bold text-neutral-950">{title}</h3>
+            <p className="mt-2 text-neutral-500">{description}</p>
           </div>
           <form
             onSubmit={(e) => e.preventDefault()}
