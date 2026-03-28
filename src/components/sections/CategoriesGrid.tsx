@@ -7,7 +7,7 @@ interface CategoriesGridProps {
 
 export default function CategoriesGrid({ categories }: CategoriesGridProps) {
   return (
-    <section className="py-12">
+    <section className="pt-12 pb-0">
       <div className="mx-auto max-w-[1354px] px-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {categories.map((category) => (

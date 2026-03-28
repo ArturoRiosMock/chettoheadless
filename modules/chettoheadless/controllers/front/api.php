@@ -6,6 +6,7 @@ require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoHomepageCategory.ph
 require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoTestimonial.php';
 require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoContentBlock.php';
 require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoHomepageProduct.php';
+require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoNewsletter.php';
 
 class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
 {
@@ -15,7 +16,19 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
 
         header('Content-Type: application/json; charset=utf-8');
         header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET');
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            http_response_code(200);
+            exit;
+        }
+
+        $action = Tools::getValue('action');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'newsletter') {
+            $this->handleNewsletter();
+            return;
+        }
 
         $data = [
             'slides' => $this->getSlides(),
@@ -33,6 +46,34 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
         ];
 
         echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        exit;
+    }
+
+    private function handleNewsletter()
+    {
+        $body = json_decode(file_get_contents('php://input'), true);
+        $email = isset($body['email']) ? trim($body['email']) : '';
+
+        if (empty($email) || !Validate::isEmail($email)) {
+            echo json_encode(['success' => false, 'message' => 'Email no válido']);
+            exit;
+        }
+
+        if (ChettoNewsletter::emailExists($email)) {
+            echo json_encode(['success' => true, 'message' => 'Ya estás suscrito']);
+            exit;
+        }
+
+        $sub = new ChettoNewsletter();
+        $sub->email = $email;
+        $sub->active = 1;
+        $sub->date_add = date('Y-m-d H:i:s');
+
+        if ($sub->add()) {
+            echo json_encode(['success' => true, 'message' => '¡Suscripción exitosa!']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error al suscribirse']);
+        }
         exit;
     }
 
@@ -207,6 +248,7 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
             'favorites_cta_link' => Configuration::get('CHETTO_FAVORITES_CTA_LINK') ?: '/ofertas',
             'barefoot_badge' => Configuration::get('CHETTO_BAREFOOT_BADGE') ?: 'Aprende sobre Barefoot',
             'barefoot_title' => Configuration::get('CHETTO_BAREFOOT_TITLE') ?: 'Las 3 claves del calzado barefoot',
+            'barefoot_title_highlight' => Configuration::get('CHETTO_BAREFOOT_TITLE_HIGHLIGHT') ?: 'calzado barefoot',
             'barefoot_description' => Configuration::get('CHETTO_BAREFOOT_DESC') ?: '',
             'barefoot_image' => $getSectionImageUrl(Configuration::get('CHETTO_BAREFOOT_IMAGE')),
             'barefoot_labels' => array_filter([
@@ -220,12 +262,25 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
             'barefoot_bf_title' => Configuration::get('CHETTO_BAREFOOT_BF_TITLE') ?: 'Beneficios',
             'why_badge' => Configuration::get('CHETTO_WHY_BADGE') ?: '¿Por qué Barefoot?',
             'why_title' => Configuration::get('CHETTO_WHY_TITLE') ?: 'Calzado que respeta el movimiento natural',
+            'why_title_highlight' => Configuration::get('CHETTO_WHY_TITLE_HIGHLIGHT') ?: 'movimiento natural',
             'why_description' => Configuration::get('CHETTO_WHY_DESC') ?: '',
             'why_image' => $getSectionImageUrl(Configuration::get('CHETTO_WHY_IMAGE')),
             'why_cta_title' => Configuration::get('CHETTO_WHY_CTA_TITLE') ?: '¿Tienes dudas sobre el calzado barefoot?',
             'why_cta_description' => Configuration::get('CHETTO_WHY_CTA_DESC') ?: '',
             'why_cta_text' => Configuration::get('CHETTO_WHY_CTA_TEXT') ?: 'Hablar con un Experto',
             'why_cta_link' => Configuration::get('CHETTO_WHY_CTA_LINK') ?: '/contacto',
+            'announce_phone' => Configuration::get('CHETTO_ANNOUNCE_PHONE') ?: '+34 660 132 249',
+            'announce_email' => Configuration::get('CHETTO_ANNOUNCE_EMAIL') ?: 'Tienda@chetto.es',
+            'announce_about_text' => Configuration::get('CHETTO_ANNOUNCE_ABOUT_TEXT') ?: 'Sobre Nosotros',
+            'announce_about_url' => Configuration::get('CHETTO_ANNOUNCE_ABOUT_URL') ?: '/sobre-nosotros',
+            'announce_stores_text' => Configuration::get('CHETTO_ANNOUNCE_STORES_TEXT') ?: 'Nuestras tiendas',
+            'announce_stores_url' => Configuration::get('CHETTO_ANNOUNCE_STORES_URL') ?: '/tiendas',
+            'testimonials_title' => Configuration::get('CHETTO_TESTIMONIALS_TITLE') ?: 'Familias Felices',
+            'testimonials_subtitle' => Configuration::get('CHETTO_TESTIMONIALS_SUBTITLE') ?: 'Lo que dicen nuestros clientes sobre el calzado barefoot',
+            'footer_description' => Configuration::get('CHETTO_FOOTER_DESC') ?: 'Calzado respetuoso para el desarrollo natural de los pies de tus hijos. Diseñado con amor y respeto por la naturaleza.',
+            'footer_phone' => Configuration::get('CHETTO_FOOTER_PHONE') ?: '660 132 049',
+            'footer_email' => Configuration::get('CHETTO_FOOTER_EMAIL') ?: 'tienda@chetto.es',
+            'footer_location' => Configuration::get('CHETTO_FOOTER_LOCATION') ?: 'Madrid, España',
         ];
     }
 }

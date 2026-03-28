@@ -1,10 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductCard from "@/components/ui/ProductCard";
-import Button from "@/components/ui/Button";
 import type { Product } from "@/types";
 import "swiper/css";
 
@@ -24,30 +24,36 @@ export default function CustomerFavorites({
   ctaLink,
 }: CustomerFavoritesProps) {
   return (
-    <section className="py-16">
+    <section className="py-[64px]">
       <div className="mx-auto max-w-[1354px] px-6">
-        <div className="flex items-end justify-between">
-          <div>
-            <h2 className="text-3xl font-bold text-neutral-950">{title}</h2>
-            <p className="mt-2 text-neutral-500">{subtitle}</p>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h2 className="text-[28px] font-medium leading-[36px] tracking-[0.07px] text-[#2d2d2d]">
+              {title}
+            </h2>
+            <p className="mt-2 text-base font-normal tracking-[-0.31px] text-[#6b6b6b]">
+              {subtitle}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
-              className="favorites-prev flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition-colors"
+              aria-label="Anterior"
+              className="favorites-prev flex size-10 items-center justify-center rounded-full border border-[#e8e6e3] text-[#2d2d2d] transition-colors hover:bg-[#f7f6f4]"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="size-5" aria-hidden />
             </button>
             <button
               type="button"
-              className="favorites-next flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 hover:bg-neutral-50 transition-colors"
+              aria-label="Siguiente"
+              className="favorites-next flex size-10 items-center justify-center rounded-full border border-[#e8e6e3] text-[#2d2d2d] transition-colors hover:bg-[#f7f6f4]"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="size-5" aria-hidden />
             </button>
           </div>
         </div>
 
-        <div className="mt-10">
+        <div className="mt-[100px]">
           <Swiper
             modules={[Navigation]}
             navigation={{
@@ -55,25 +61,24 @@ export default function CustomerFavorites({
               nextEl: ".favorites-next",
             }}
             spaceBetween={24}
-            slidesPerView={2}
-            breakpoints={{
-              640: { slidesPerView: 3 },
-              1024: { slidesPerView: 4 },
-              1280: { slidesPerView: 4.5 },
-            }}
+            slidesPerView="auto"
+            watchOverflow
           >
             {products.map((product) => (
-              <SwiperSlide key={product.id}>
+              <SwiperSlide key={product.id} className="!w-[280px]">
                 <ProductCard product={product} showColors={false} />
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
 
-        <div className="mt-10 text-center">
-          <Button href={ctaLink} variant="outline" size="lg">
+        <div className="mt-[48px] flex justify-center">
+          <Link
+            href={ctaLink}
+            className="inline-flex h-[48px] items-center justify-center rounded-full border border-[#2d2d2d] px-8 text-base font-medium text-[#2d2d2d] transition-colors hover:bg-[#f7f6f4]"
+          >
             {ctaText}
-          </Button>
+          </Link>
         </div>
       </div>
     </section>

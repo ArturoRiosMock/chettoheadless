@@ -1,4 +1,4 @@
-import type { Product, Category, HomepageContent } from "@/types";
+import type { Product, Category, HomepageContent, HomepageConfig } from "@/types";
 
 /**
  * PrestaShop Webservice API client.
@@ -56,6 +56,35 @@ class PrestashopClient {
     }
 
     return response.json();
+  }
+
+  async subscribeNewsletter(email: string): Promise<{ success: boolean; message: string }> {
+    const url = `${this.#baseUrl}/index.php?fc=module&module=chettoheadless&controller=api&action=newsletter`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      return { success: false, message: "Error de conexión" };
+    }
+
+    return response.json();
+  }
+
+  async getSiteConfig(): Promise<HomepageConfig> {
+    const url = `${this.#baseUrl}/index.php?fc=module&module=chettoheadless&controller=api`;
+    const response = await fetch(url, {
+      next: { revalidate: 300 },
+    });
+
+    if (!response.ok) {
+      throw new Error(`CMS API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.config;
   }
 }
 

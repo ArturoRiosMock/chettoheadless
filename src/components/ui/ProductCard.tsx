@@ -1,6 +1,6 @@
 import CmsImage from "@/components/ui/CmsImage";
 import Link from "next/link";
-import Badge from "./Badge";
+import type { ReactNode } from "react";
 import type { Product } from "@/types";
 
 interface ProductCardProps {
@@ -8,52 +8,61 @@ interface ProductCardProps {
   showColors?: boolean;
 }
 
+function cardBadgeLabel(children: ReactNode) {
+  return (
+    <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#2d2d2d]">
+      {children}
+    </span>
+  );
+}
+
 export default function ProductCard({ product, showColors = true }: ProductCardProps) {
   return (
-    <Link href={`/producto/${product.slug}`} className="group block">
-      <div className="relative overflow-hidden rounded-xl bg-neutral-100 aspect-[3/4]">
-        {product.image ? (
-          <CmsImage
-            src={product.image}
-            alt={product.name}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 768px) 50vw, 25vw"
-          />
-        ) : (
-          <div className="h-full w-full bg-neutral-200" />
-        )}
-        {product.badge && (
-          <div className="absolute top-4 left-4">
-            <Badge variant="new">{product.badge}</Badge>
-          </div>
-        )}
-        {product.discount && (
-          <div className="absolute top-4 left-4">
-            <Badge variant="discount">{product.discount}</Badge>
-          </div>
-        )}
-      </div>
-      <div className="mt-4">
-        <h3 className="text-base font-semibold text-neutral-950 group-hover:text-brand-600 transition-colors">
-          {product.name}
-        </h3>
-        <div className="mt-2 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-base font-semibold">
-              {product.price.toFixed(2).replace(".", ",")}€
-            </span>
-            {product.originalPrice && (
-              <span className="text-sm text-neutral-500 line-through">
-                {product.originalPrice.toFixed(2).replace(".", ",")}€
+    <Link href={`/producto/${product.slug}`} className="block">
+      <div className="flex flex-col gap-4">
+        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[16px] bg-[#f7f6f4]">
+          {product.image ? (
+            <CmsImage
+              src={product.image}
+              alt={product.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 50vw, 25vw"
+            />
+          ) : (
+            <div className="h-full w-full bg-[#f7f6f4]" />
+          )}
+          {(product.badge || product.discount) && (
+            <div className="absolute left-4 top-4 flex flex-col gap-2">
+              {product.badge && cardBadgeLabel(product.badge)}
+              {product.discount && cardBadgeLabel(product.discount)}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <h3
+            className="text-[18px] font-medium leading-[27px] tracking-[-0.44px] text-[#2d2d2d]"
+          >
+            {product.name}
+          </h3>
+          <div className="mt-2 flex items-center justify-between gap-2">
+            <div className="flex min-w-0 shrink items-center">
+              <span className="text-[16px] font-normal tracking-[-0.31px] text-[#2d2d2d]">
+                {product.price.toFixed(2).replace(".", ",")}€
+              </span>
+              {product.originalPrice != null && (
+                <span className="ml-2 text-xs leading-none text-[#6b6b6b] line-through">
+                  {product.originalPrice.toFixed(2).replace(".", ",")}€
+                </span>
+              )}
+            </div>
+            {showColors && product.colors != null && product.colors > 0 && (
+              <span className="flex-shrink-0 text-xs tracking-[0.05px] text-[#6b6b6b]">
+                {product.colors} colores
               </span>
             )}
           </div>
-          {showColors && product.colors && (
-            <span className="text-xs text-neutral-500">
-              {product.colors} colores
-            </span>
-          )}
         </div>
       </div>
     </Link>

@@ -60,6 +60,7 @@ Anota la API key generada y ponla en `.env.local`.
 ```bash
 docker exec chetto-prestashop php /var/www/html/scripts/seed-cms-data.php
 docker exec chetto-prestashop php /var/www/html/scripts/seed-products-and-config.php
+docker exec chetto-prestashop php /var/www/html/scripts/seed-layout-config.php
 ```
 
 ## Paso 6 — Configurar variables de entorno
@@ -131,13 +132,17 @@ chettoheadless/
 | Estadísticas             | Módulo → Configurar               | Configuration keys    |
 | Títulos de secciones     | Módulo → Configurar               | Configuration keys    |
 | Imágenes de secciones    | Módulo → Configurar               | File upload           |
+| Barra de anuncio (top)   | Módulo → Configurar               | Configuration keys    |
+| Testimonios (título)     | Módulo → Configurar               | Configuration keys    |
 
 ## Notas técnicas
 
 - **Imágenes localhost**: El componente `CmsImage` usa `<img>` estándar para URLs de localhost (Next.js Image Optimization rechaza IPs privadas). En producción con dominio real, usa `next/image` optimizado.
-- **Cache**: `getHomepageContent()` usa `cache: "no-store"` para desarrollo (cambios inmediatos). En producción, cambiar a `next: { revalidate: 60 }`.
+- **Cache**: `getHomepageContent()` usa `cache: "no-store"` para desarrollo (cambios inmediatos). En producción, cambiar a `next: { revalidate: 60 }`. El layout usa `getSiteConfig()` con revalidate de 5 min.
 - **PrestaShop 9**: No soporta `$this->l()` en `ModuleAdminController`. Los strings van directos.
 - **Front controller**: El archivo debe llamarse `api.php` (minúsculas), no `ApiController.php`.
+- **Colores Figma**: Los tokens de color en `globals.css` coinciden con el diseño Figma (neutrales cálidos: `#2d2d2d`, `#6b6b6b`, `#f7f6f4`, `#e8e6e3`).
+- **Newsletter**: En Figma, el newsletter es parte del footer, no una sección independiente. Se eliminó la sección `Newsletter` de `page.tsx` y el footer usa los datos CMS (`newsletter_title`/`newsletter_description`).
 
 ## Troubleshooting
 

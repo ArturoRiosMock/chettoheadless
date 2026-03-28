@@ -85,6 +85,10 @@ class ChettoHeadless extends Module
             'AdminChettoBenefits' => 'Beneficios',
             'AdminChettoCategories' => 'Categorías Homepage',
             'AdminChettoProducts' => 'Productos Homepage',
+            'AdminChettoBarefoot' => 'Las 3 Claves',
+            'AdminChettoFamilias' => 'Familias Felices',
+            'AdminChettoWhyBarefoot' => '¿Por qué Barefoot?',
+            'AdminChettoFooter' => 'Footer y Newsletter',
             'AdminChettoTestimonials' => 'Testimonios',
             'AdminChettoContent' => 'Bloques de Contenido',
         ];
@@ -115,6 +119,10 @@ class ChettoHeadless extends Module
             'AdminChettoBenefits',
             'AdminChettoCategories',
             'AdminChettoProducts',
+            'AdminChettoBarefoot',
+            'AdminChettoFamilias',
+            'AdminChettoWhyBarefoot',
+            'AdminChettoFooter',
             'AdminChettoTestimonials',
             'AdminChettoContent',
             'AdminChettoParent',
@@ -161,6 +169,7 @@ class ChettoHeadless extends Module
             'CHETTO_FAVORITES_CTA_LINK',
             'CHETTO_BAREFOOT_BADGE',
             'CHETTO_BAREFOOT_TITLE',
+            'CHETTO_BAREFOOT_TITLE_HIGHLIGHT',
             'CHETTO_BAREFOOT_DESC',
             'CHETTO_BAREFOOT_IMAGE',
             'CHETTO_BAREFOOT_LABEL_1',
@@ -172,12 +181,25 @@ class ChettoHeadless extends Module
             'CHETTO_BAREFOOT_BF_TITLE',
             'CHETTO_WHY_BADGE',
             'CHETTO_WHY_TITLE',
+            'CHETTO_WHY_TITLE_HIGHLIGHT',
             'CHETTO_WHY_DESC',
             'CHETTO_WHY_IMAGE',
             'CHETTO_WHY_CTA_TITLE',
             'CHETTO_WHY_CTA_DESC',
             'CHETTO_WHY_CTA_TEXT',
             'CHETTO_WHY_CTA_LINK',
+            'CHETTO_ANNOUNCE_PHONE',
+            'CHETTO_ANNOUNCE_EMAIL',
+            'CHETTO_ANNOUNCE_ABOUT_TEXT',
+            'CHETTO_ANNOUNCE_ABOUT_URL',
+            'CHETTO_ANNOUNCE_STORES_TEXT',
+            'CHETTO_ANNOUNCE_STORES_URL',
+            'CHETTO_TESTIMONIALS_TITLE',
+            'CHETTO_TESTIMONIALS_SUBTITLE',
+            'CHETTO_FOOTER_DESC',
+            'CHETTO_FOOTER_PHONE',
+            'CHETTO_FOOTER_EMAIL',
+            'CHETTO_FOOTER_LOCATION',
         ];
     }
 
@@ -285,6 +307,7 @@ class ChettoHeadless extends Module
                 'input' => [
                     ['type' => 'text', 'label' => 'Badge', 'name' => 'CHETTO_BAREFOOT_BADGE', 'desc' => 'Ej: Aprende sobre Barefoot'],
                     ['type' => 'text', 'label' => 'Título', 'name' => 'CHETTO_BAREFOOT_TITLE', 'desc' => 'Ej: Las 3 claves del calzado barefoot'],
+                    ['type' => 'text', 'label' => 'Título (parte destacada)', 'name' => 'CHETTO_BAREFOOT_TITLE_HIGHLIGHT', 'desc' => 'Parte del título en color dorado. Ej: calzado barefoot'],
                     ['type' => 'textarea', 'label' => 'Descripción', 'name' => 'CHETTO_BAREFOOT_DESC'],
                     ['type' => 'file', 'label' => 'Imagen producto', 'name' => 'CHETTO_BAREFOOT_IMAGE_FILE', 'desc' => 'Imagen del zapato en la sección' . $barefootImgHtml],
                     ['type' => 'text', 'label' => 'Etiqueta 1', 'name' => 'CHETTO_BAREFOOT_LABEL_1', 'desc' => 'Ej: Flexible'],
@@ -311,6 +334,32 @@ class ChettoHeadless extends Module
                     ['type' => 'textarea', 'label' => 'CTA - Descripción', 'name' => 'CHETTO_WHY_CTA_DESC'],
                     ['type' => 'text', 'label' => 'CTA - Texto botón', 'name' => 'CHETTO_WHY_CTA_TEXT', 'desc' => 'Ej: Hablar con un Experto'],
                     ['type' => 'text', 'label' => 'CTA - Enlace', 'name' => 'CHETTO_WHY_CTA_LINK', 'desc' => 'Ej: /contacto'],
+                ],
+                'submit' => ['title' => 'Guardar'],
+            ],
+        ];
+
+        $forms[] = [
+            'form' => [
+                'legend' => ['title' => 'Barra de Anuncio (top)', 'icon' => 'icon-bullhorn'],
+                'input' => [
+                    ['type' => 'text', 'label' => 'Teléfono', 'name' => 'CHETTO_ANNOUNCE_PHONE', 'desc' => 'Ej: +34 660 132 249'],
+                    ['type' => 'text', 'label' => 'Email', 'name' => 'CHETTO_ANNOUNCE_EMAIL', 'desc' => 'Ej: Tienda@chetto.es'],
+                    ['type' => 'text', 'label' => 'Enlace izquierdo - Texto', 'name' => 'CHETTO_ANNOUNCE_ABOUT_TEXT', 'desc' => 'Ej: Sobre Nosotros'],
+                    ['type' => 'text', 'label' => 'Enlace izquierdo - URL', 'name' => 'CHETTO_ANNOUNCE_ABOUT_URL', 'desc' => 'Ej: /sobre-nosotros'],
+                    ['type' => 'text', 'label' => 'Enlace tiendas - Texto', 'name' => 'CHETTO_ANNOUNCE_STORES_TEXT', 'desc' => 'Ej: Nuestras tiendas'],
+                    ['type' => 'text', 'label' => 'Enlace tiendas - URL', 'name' => 'CHETTO_ANNOUNCE_STORES_URL', 'desc' => 'Ej: /tiendas'],
+                ],
+                'submit' => ['title' => 'Guardar'],
+            ],
+        ];
+
+        $forms[] = [
+            'form' => [
+                'legend' => ['title' => 'Testimonios', 'icon' => 'icon-comments'],
+                'input' => [
+                    ['type' => 'text', 'label' => 'Título', 'name' => 'CHETTO_TESTIMONIALS_TITLE', 'desc' => 'Ej: Familias Felices'],
+                    ['type' => 'text', 'label' => 'Subtítulo', 'name' => 'CHETTO_TESTIMONIALS_SUBTITLE', 'desc' => 'Ej: Lo que dicen nuestros clientes...'],
                 ],
                 'submit' => ['title' => 'Guardar'],
             ],

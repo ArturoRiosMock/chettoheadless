@@ -8,25 +8,26 @@ export default function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="border-b border-neutral-200 bg-white">
-      <div className="mx-auto max-w-[1354px] px-6">
-        <ul className="flex items-center justify-center gap-1 h-14">
+    <nav className="h-14 bg-white">
+      <div className="mx-auto flex h-14 max-w-[1354px] px-6">
+        <ul className="flex h-full w-full items-stretch justify-center gap-8">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <li key={item.href}>
+              <li key={item.href} className="flex h-full">
                 <Link
                   href={item.href}
-                  className={`relative px-4 py-4 text-sm font-medium transition-colors ${
-                    isActive
-                      ? "text-neutral-950"
-                      : "text-neutral-600 hover:text-neutral-950"
-                  }`}
+                  className="flex h-full min-h-14 flex-col text-sm font-medium tracking-[0.1996px] text-[#2d2d2d]"
                 >
-                  {item.label}
-                  {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 w-full bg-neutral-950 rounded-full" />
-                  )}
+                  <span className="flex flex-1 items-center justify-center">
+                    {item.label}
+                  </span>
+                  <span
+                    className={`h-[2px] w-full shrink-0 ${
+                      isActive ? "bg-[#c4b5a0]" : "bg-transparent"
+                    }`}
+                    aria-hidden
+                  />
                 </Link>
               </li>
             );

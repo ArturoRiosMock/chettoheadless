@@ -67,6 +67,15 @@ CREATE TABLE IF NOT EXISTS `PREFIX_chetto_content_block` (
     PRIMARY KEY (`id_chetto_content_block`)
 ) ENGINE=ENGINE_TYPE DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `PREFIX_chetto_newsletter` (
+    `id_chetto_newsletter` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `email` VARCHAR(255) NOT NULL,
+    `active` TINYINT(1) UNSIGNED NOT NULL DEFAULT 1,
+    `date_add` DATETIME NOT NULL,
+    PRIMARY KEY (`id_chetto_newsletter`),
+    UNIQUE KEY `email` (`email`)
+) ENGINE=ENGINE_TYPE DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `PREFIX_chetto_homepage_product` (
     `id_chetto_homepage_product` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `section_type` VARCHAR(32) NOT NULL DEFAULT 'featured',

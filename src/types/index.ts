@@ -93,6 +93,7 @@ export interface HomepageConfig {
   favorites_cta_link: string;
   barefoot_badge: string;
   barefoot_title: string;
+  barefoot_title_highlight: string;
   barefoot_description: string;
   barefoot_image: string;
   barefoot_labels: string[];
@@ -102,12 +103,25 @@ export interface HomepageConfig {
   barefoot_bf_title: string;
   why_badge: string;
   why_title: string;
+  why_title_highlight: string;
   why_description: string;
   why_image: string;
   why_cta_title: string;
   why_cta_description: string;
   why_cta_text: string;
   why_cta_link: string;
+  announce_phone: string;
+  announce_email: string;
+  announce_about_text: string;
+  announce_about_url: string;
+  announce_stores_text: string;
+  announce_stores_url: string;
+  testimonials_title: string;
+  testimonials_subtitle: string;
+  footer_description: string;
+  footer_phone: string;
+  footer_email: string;
+  footer_location: string;
 }
 
 export interface HomepageContent {

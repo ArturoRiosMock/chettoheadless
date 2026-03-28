@@ -100,7 +100,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     name: "Sneaker Kaki Kids",
     slug: "sneaker-kaki-kids",
     price: 54.95,
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=303&h=403&fit=crop",
+    image: "/images/products/sneaker-kaki-kids.png",
     colors: 4,
     badge: "Nuevo",
     category: "sneakers",
@@ -110,7 +110,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     name: "Sneaker Maroon",
     slug: "sneaker-maroon",
     price: 54.95,
-    image: "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=303&h=403&fit=crop",
+    image: "/images/products/sneaker-maroon.png",
     colors: 3,
     category: "sneakers",
   },
@@ -119,7 +119,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     name: "Sneaker Grey",
     slug: "sneaker-grey",
     price: 54.95,
-    image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=303&h=403&fit=crop",
+    image: "",
     colors: 2,
     category: "sneakers",
   },
@@ -128,7 +128,7 @@ export const FEATURED_PRODUCTS: Product[] = [
     name: "Sneaker Light Pink",
     slug: "sneaker-light-pink",
     price: 54.95,
-    image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=303&h=403&fit=crop",
+    image: "/images/products/sneaker-light-pink.png",
     colors: 3,
     badge: "Nuevo",
     category: "sneakers",
@@ -213,7 +213,7 @@ export const BAREFOOT_FEATURES: BarefootFeature[] = [
     title: "Drop Cero",
     shortDescription: "Sin elevación del talón",
     longDescription:
-      "La misma altura en talón y puntera favorece una postura natural y alineada, reduciendo el impacto en articulaciones.",
+      "La misma altura en talón y puntera favorece una postura natural y alineación correcta de la columna vertebral.",
   },
   {
     id: 3,
@@ -231,7 +231,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "María González",
     location: "Madrid",
     rating: 5,
-    text: '"Los mejores zapatos para mi hijo. Desde que usa barefoot, su postura ha mejorado notablemente y camina con más seguridad."',
+    text: '"Los mejores zapatos para mi hijo. Desde que usa barefoot, ha mejorado su postura y ya no se queja de dolor de pies."',
     initial: "M",
   },
   {
@@ -239,7 +239,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Carlos Ruiz",
     location: "Barcelona",
     rating: 5,
-    text: '"Calidad excepcional y atención al cliente increíble. Los zapatos son cómodos y duraderos."',
+    text: '"Calidad excepcional y atención al cliente increíble. La diferencia con el calzado tradicional es notable."',
     initial: "C",
   },
   {
@@ -247,7 +247,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "Ana Martínez",
     location: "Valencia",
     rating: 5,
-    text: '"Mi hija está encantada con sus nuevas zapatillas. Son ligeras, flexibles y con un diseño precioso."',
+    text: '"Mi hija está encantada con sus nuevas zapatillas. Son cómodas, bonitas y sé que están cuidando sus pies."',
     initial: "A",
   },
   {
@@ -255,7 +255,7 @@ export const TESTIMONIALS: Testimonial[] = [
     name: "David López",
     location: "Sevilla",
     rating: 5,
-    text: '"Compra recomendada al 100%. El equipo me ayudó a elegir la talla perfecta para mis dos hijos."',
+    text: '"Compra recomendada al 100%. El equipo me ayudó a elegir la talla perfecta y el envío fue rapidísimo."',
     initial: "D",
   },
 ];
@@ -266,28 +266,28 @@ export const WHY_BAREFOOT_CARDS: WhyBarefootCard[] = [
     icon: "Sprout",
     title: "Desarrollo Natural",
     description:
-      "Permite que los pies de tu hijo se desarrollen de forma natural sin restricciones.",
+      "Permite que los pies de tu hijo se desarrollen de forma natural, sin restricciones artificiales.",
   },
   {
     id: 2,
     icon: "Heart",
     title: "Salud y Bienestar",
     description:
-      "Mejora la postura, el equilibrio y fortalece la musculatura del pie.",
+      "Mejora la postura, el equilibrio y fortalece la musculatura del pie desde pequeños.",
   },
   {
     id: 3,
     icon: "Footprints",
     title: "Conexión Natural",
     description:
-      "Sensibilidad al terreno que favorece el desarrollo sensorial y propioceptivo.",
+      "Sensibilidad al terreno que favorece el desarrollo sensorial y la propiocepción.",
   },
   {
     id: 4,
     icon: "Shield",
     title: "Protección Respetuosa",
     description:
-      "Protección necesaria sin comprometer la libertad de movimiento del pie.",
+      "Protección necesaria sin comprometer la libertad de movimiento natural del pie.",
   },
 ];
 

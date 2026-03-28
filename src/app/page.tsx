@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import HeroSlider from "@/components/sections/HeroSlider";
 import BenefitsBar from "@/components/sections/BenefitsBar";
 import CategoriesGrid from "@/components/sections/CategoriesGrid";
@@ -6,8 +7,12 @@ import BarefootEducation from "@/components/sections/BarefootEducation";
 import CustomerFavorites from "@/components/sections/CustomerFavorites";
 import Testimonials from "@/components/sections/Testimonials";
 import WhyBarefoot from "@/components/sections/WhyBarefoot";
-import Newsletter from "@/components/sections/Newsletter";
 import { prestashop } from "@/lib/prestashop";
+
+export const metadata: Metadata = {
+  title: "Chetto - Calzado Barefoot para Niños | Inicio",
+  alternates: { canonical: "/" },
+};
 import {
   HERO_SLIDES,
   BENEFITS,
@@ -101,8 +106,9 @@ export default async function Home() {
         barefootBenefits={barefootBenefits}
         badge={cfg?.barefoot_badge || "Aprende sobre Barefoot"}
         title={cfg?.barefoot_title || "Las 3 claves del calzado barefoot"}
-        description={cfg?.barefoot_description || "Descubre qué hace que el calzado barefoot sea diferente y por qué es la mejor opción para el desarrollo de tus hijos."}
-        image={cfg?.barefoot_image || "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&h=600&fit=crop"}
+        titleHighlight={cfg?.barefoot_title_highlight || "calzado barefoot"}
+        description={cfg?.barefoot_description || "Descubre qué hace que el calzado barefoot sea diferente y por qué es la mejor elección para el desarrollo saludable de los pies infantiles"}
+        image={cfg?.barefoot_image || "/images/barefoot/shoe-top-sole.png"}
         labels={cfg?.barefoot_labels || ["Flexible", "0mm Drop", "Horma Amplia"]}
         tradBadge={cfg?.barefoot_trad_badge || "Calzado Tradicional"}
         tradTitle={cfg?.barefoot_trad_title || "Limitaciones"}
@@ -116,22 +122,24 @@ export default async function Home() {
         ctaText={cfg?.favorites_cta_text || "Ver Todas las Ofertas"}
         ctaLink={cfg?.favorites_cta_link || "/ofertas"}
       />
-      <Testimonials testimonials={testimonials} stats={stats} />
+      <Testimonials
+        testimonials={testimonials}
+        stats={stats}
+        title={cfg?.testimonials_title || "Familias Felices"}
+        subtitle={cfg?.testimonials_subtitle || "Lo que dicen nuestros clientes sobre el calzado barefoot"}
+      />
       <WhyBarefoot
         cards={whyBarefootCards}
         features={whyBarefootFeatures}
         badge={cfg?.why_badge || "¿Por qué Barefoot?"}
         title={cfg?.why_title || "Calzado que respeta el movimiento natural"}
-        description={cfg?.why_description || "El calzado barefoot está diseñado para imitar la sensación de caminar descalzo, ofreciendo la protección necesaria mientras permite que el pie funcione de forma natural."}
-        image={cfg?.why_image || "https://images.unsplash.com/photo-1503919545889-aef636e10ad4?w=621&h=400&fit=crop"}
+        titleHighlight={cfg?.why_title_highlight || "movimiento natural"}
+        description={cfg?.why_description || "El calzado barefoot está diseñado para imitar la sensación de caminar descalzo, permitiendo que los pies de los niños se desarrollen de forma natural y saludable."}
+        image={cfg?.why_image || "/images/barefoot/ninos-caminando.jpg"}
         ctaTitle={cfg?.why_cta_title || "¿Tienes dudas sobre el calzado barefoot?"}
-        ctaDescription={cfg?.why_cta_description || "Nuestro equipo está aquí para ayudarte a encontrar el calzado perfecto para tus hijos."}
+        ctaDescription={cfg?.why_cta_description || "Nuestro equipo está aquí para ayudarte a encontrar el zapato perfecto para tu hijo"}
         ctaText={cfg?.why_cta_text || "Hablar con un Experto"}
         ctaLink={cfg?.why_cta_link || "/contacto"}
-      />
-      <Newsletter
-        title={cfg?.newsletter_title || "Únete a la familia barefoot"}
-        description={cfg?.newsletter_description || "Recibe consejos, guías y ofertas exclusivas sobre calzado barefoot"}
       />
     </>
   );
