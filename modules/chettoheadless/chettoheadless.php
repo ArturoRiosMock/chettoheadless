@@ -70,6 +70,7 @@ class ChettoHeadless extends Module
         $parents = [
             'AdminChettoHomeParent' => ['name' => 'CMS: Home', 'icon' => 'home'],
             'AdminChettoProductParent' => ['name' => 'CMS: Producto', 'icon' => 'shopping_cart'],
+            'AdminChettoBfParent' => ['name' => 'CMS: Por que Barefoot', 'icon' => 'help_outline'],
             'AdminChettoCollParent' => ['name' => 'CMS: Colecciones', 'icon' => 'list'],
             'AdminChettoGlobalParent' => ['name' => 'CMS: Global', 'icon' => 'settings'],
         ];
@@ -101,6 +102,7 @@ class ChettoHeadless extends Module
             'AdminChettoFamilias'    => ['parent' => 'AdminChettoHomeParent', 'name' => 'Familias Felices'],
             'AdminChettoWhyBarefoot' => ['parent' => 'AdminChettoHomeParent', 'name' => 'Por que Barefoot'],
             'AdminChettoProductPage' => ['parent' => 'AdminChettoProductParent', 'name' => 'Secciones editables'],
+            'AdminChettoPorqueBarefoot' => ['parent' => 'AdminChettoBfParent', 'name' => 'Secciones editables'],
             'AdminChettoCollections' => ['parent' => 'AdminChettoCollParent', 'name' => 'Pagina y Tarjetas'],
             'AdminChettoFooter'      => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Footer y Newsletter'],
             'AdminChettoContent'     => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Bloques de Contenido'],
@@ -139,8 +141,10 @@ class ChettoHeadless extends Module
             'AdminChettoTestimonials',
             'AdminChettoContent',
             'AdminChettoProductPage',
+            'AdminChettoPorqueBarefoot',
             'AdminChettoHomeParent',
             'AdminChettoProductParent',
+            'AdminChettoBfParent',
             'AdminChettoCollParent',
             'AdminChettoGlobalParent',
             'AdminChettoParent',
