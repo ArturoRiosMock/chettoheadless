@@ -353,6 +353,19 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
             'footer_phone' => Configuration::get('CHETTO_FOOTER_PHONE') ?: '660 132 049',
             'footer_email' => Configuration::get('CHETTO_FOOTER_EMAIL') ?: 'tienda@chetto.es',
             'footer_location' => Configuration::get('CHETTO_FOOTER_LOCATION') ?: 'Madrid, España',
+            'sz_cta_title' => Configuration::get('CHETTO_SZ_CTA_TITLE') ?: '¿Necesitas ayuda con las tallas?',
+            'sz_cta_desc' => Configuration::get('CHETTO_SZ_CTA_DESC') ?: 'Nuestro equipo está aquí para ayudarte a elegir la talla perfecta',
+            'sz_cta_button' => Configuration::get('CHETTO_SZ_CTA_BUTTON') ?: 'Contactar con atención al cliente',
+            'cs_phone' => Configuration::get('CHETTO_CS_PHONE') ?: '660 132 049',
+            'cs_email' => Configuration::get('CHETTO_CS_EMAIL') ?: 'tienda@chetto.es',
+            'cs_hours_weekday' => Configuration::get('CHETTO_CS_HOURS_WEEKDAY') ?: 'Lunes - Viernes: 9:00 - 18:00h',
+            'cs_hours_saturday' => Configuration::get('CHETTO_CS_HOURS_SAT') ?: 'Sábados: 10:00 - 14:00h',
+            'cs_commitment_desc' => Configuration::get('CHETTO_CS_COMMIT_DESC') ?: 'En Chetto, tu satisfacción es nuestra prioridad. Nuestro equipo de atención al cliente está formado por expertos en calzado barefoot.',
+            'contact_phone' => Configuration::get('CHETTO_CONTACT_PHONE') ?: '660 132 049',
+            'contact_email' => Configuration::get('CHETTO_CONTACT_EMAIL') ?: 'tienda@chetto.es',
+            'stores_title' => Configuration::get('CHETTO_STORES_TITLE') ?: 'Mapa de tiendas',
+            'about_cta_title' => Configuration::get('CHETTO_ABOUT_CTA_TITLE') ?: '¡Ojalá te enamores de Chetto tanto como lo estamos nosotros!',
+            'about_cta_desc' => Configuration::get('CHETTO_ABOUT_CTA_DESC') ?: 'Descubre nuestra colección de calzado barefoot para niños',
         ];
     }
 }

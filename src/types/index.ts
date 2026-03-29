@@ -143,6 +143,9 @@ export interface HomepageConfig {
   care_repair_title: string;
   care_repair_desc: string;
   care_pro_tip: string;
+  sz_cta_title?: string;
+  sz_cta_desc?: string;
+  sz_cta_button?: string;
   faq_cta_title: string;
   faq_cta_desc: string;
   faq_cta_button: string;
@@ -183,6 +186,16 @@ export interface HomepageConfig {
   footer_phone: string;
   footer_email: string;
   footer_location: string;
+  cs_phone?: string;
+  cs_email?: string;
+  contact_phone?: string;
+  contact_email?: string;
+  cs_hours_weekday?: string;
+  cs_hours_saturday?: string;
+  cs_commitment_desc?: string;
+  stores_title?: string;
+  about_cta_title?: string;
+  about_cta_desc?: string;
 }
 
 export interface HomepageContent {
