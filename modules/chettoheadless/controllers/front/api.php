@@ -7,6 +7,7 @@ require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoTestimonial.php';
 require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoContentBlock.php';
 require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoHomepageProduct.php';
 require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoNewsletter.php';
+require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoCollection.php';
 
 class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
 {
@@ -40,6 +41,7 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
             'limitations' => $this->getContentBlocks('limitation'),
             'barefoot_benefits' => $this->getContentBlocks('barefoot_benefit'),
             'why_barefoot_features' => $this->getContentBlocks('why_barefoot_feature'),
+            'collections' => $this->getCollections(),
             'featured_products' => $this->getHomepageProducts('featured'),
             'favorites_products' => $this->getHomepageProducts('favorites'),
             'config' => $this->getConfig(),
@@ -216,6 +218,24 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
         return $products;
     }
 
+    private function getCollections()
+    {
+        $rows = ChettoCollection::getAll();
+        $collections = [];
+
+        foreach ($rows as $row) {
+            $collections[] = [
+                'id' => (int) $row['id_chetto_collection'],
+                'name' => $row['name'],
+                'description' => $row['description'] ?? '',
+                'image' => ChettoCollection::getImageUrl($row['image']),
+                'slug' => $row['slug'],
+            ];
+        }
+
+        return $collections;
+    }
+
     private function getConfig()
     {
         $stats = [];
@@ -277,6 +297,8 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
             'announce_stores_url' => Configuration::get('CHETTO_ANNOUNCE_STORES_URL') ?: '/tiendas',
             'testimonials_title' => Configuration::get('CHETTO_TESTIMONIALS_TITLE') ?: 'Familias Felices',
             'testimonials_subtitle' => Configuration::get('CHETTO_TESTIMONIALS_SUBTITLE') ?: 'Lo que dicen nuestros clientes sobre el calzado barefoot',
+            'collection_page_title' => Configuration::get('CHETTO_COLL_PAGE_TITLE') ?: 'Nuestras Colecciones',
+            'collection_page_subtitle' => Configuration::get('CHETTO_COLL_PAGE_SUBTITLE') ?: 'Encuentra el calzado barefoot perfecto para cada ocasión',
             'collection_cta_title' => Configuration::get('CHETTO_COLLECTION_CTA_TITLE') ?: '¿Primera vez con calzado barefoot?',
             'collection_cta_description' => Configuration::get('CHETTO_COLLECTION_CTA_DESC') ?: 'Descubre nuestra guía completa sobre cómo elegir el zapato barefoot perfecto para tu hijo',
             'collection_cta_text' => Configuration::get('CHETTO_COLLECTION_CTA_TEXT') ?: 'Ver Guía Barefoot',

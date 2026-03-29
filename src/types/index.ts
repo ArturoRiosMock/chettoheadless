@@ -61,6 +61,14 @@ export interface WhyBarefootCard {
   description: string;
 }
 
+export interface Collection {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+  slug: string;
+}
+
 export interface NavItem {
   label: string;
   href: string;
@@ -118,6 +126,8 @@ export interface HomepageConfig {
   announce_stores_url: string;
   testimonials_title: string;
   testimonials_subtitle: string;
+  collection_page_title: string;
+  collection_page_subtitle: string;
   collection_cta_title: string;
   collection_cta_description: string;
   collection_cta_text: string;
@@ -138,6 +148,7 @@ export interface HomepageContent {
   limitations: ContentBlock[];
   barefoot_benefits: ContentBlock[];
   why_barefoot_features: ContentBlock[];
+  collections: Collection[];
   featured_products: Product[];
   favorites_products: Product[];
   config: HomepageConfig;

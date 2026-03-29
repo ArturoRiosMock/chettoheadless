@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CmsImage from "@/components/ui/CmsImage";
+import { prestashop } from "@/lib/prestashop";
+import type { Collection } from "@/types";
 
 export const metadata: Metadata = {
   title: "Colecciones - Calzado Barefoot para Niños",
@@ -8,50 +10,36 @@ export const metadata: Metadata = {
     "Explora todas nuestras colecciones de calzado barefoot para niños: botas, sneakers, sandalias, casual y más.",
 };
 
-const COLLECTIONS = [
-  {
-    slug: "novedades",
-    name: "Novedades",
-    description: "Lo último en calzado barefoot",
-    image: "/images/products/sneaker-kaki-kids.png",
-  },
-  {
-    slug: "botas",
-    name: "Botas / Botines",
-    description: "Protección y flexibilidad",
-    image: "/images/collections/bota-maroon.jpg",
-  },
-  {
-    slug: "sneakers",
-    name: "Sneakers",
-    description: "Versatilidad diaria",
-    image: "/images/products/sneaker-maroon.png",
-  },
-  {
-    slug: "sandalias",
-    name: "Sandalias",
-    description: "Para el verano",
-    image: "/images/cat-sandalias-figma.png",
-  },
-  {
-    slug: "casual",
-    name: "Casual / Classic",
-    description: "Estilo clásico",
-    image: "/images/cat-casual-figma.png",
-  },
-  {
-    slug: "ofertas",
-    name: "Ofertas",
-    description: "Los mejores precios",
-    image: "/images/products/sneaker-light-pink.png",
-  },
+const FALLBACK_COLLECTIONS: Collection[] = [
+  { id: 1, slug: "novedades", name: "Novedades", description: "Lo último en calzado barefoot", image: "/images/products/sneaker-kaki-kids.png" },
+  { id: 2, slug: "botas", name: "Botas / Botines", description: "Protección y flexibilidad", image: "/images/collections/bota-maroon.jpg" },
+  { id: 3, slug: "sneakers", name: "Sneakers", description: "Versatilidad diaria", image: "/images/products/sneaker-maroon.png" },
+  { id: 4, slug: "sandalias", name: "Sandalias", description: "Para el verano", image: "/images/cat-sandalias-figma.png" },
+  { id: 5, slug: "casual", name: "Casual / Classic", description: "Estilo clásico", image: "/images/cat-casual-figma.png" },
+  { id: 6, slug: "ofertas", name: "Ofertas", description: "Los mejores precios", image: "/images/products/sneaker-light-pink.png" },
 ];
 
-export default function CollectionsIndex() {
+export default async function CollectionsIndex() {
+  let collections: Collection[] = FALLBACK_COLLECTIONS;
+  let pageTitle = "Nuestras Colecciones";
+  let pageSubtitle = "Encuentra el calzado barefoot perfecto para cada ocasión";
+
+  try {
+    const cms = await prestashop.getHomepageContent();
+    if (cms?.collections && cms.collections.length > 0) {
+      collections = cms.collections;
+    }
+    if (cms?.config) {
+      pageTitle = cms.config.collection_page_title || pageTitle;
+      pageSubtitle = cms.config.collection_page_subtitle || pageSubtitle;
+    }
+  } catch {
+    // fallback
+  }
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-[1354px] px-6">
-        {/* Breadcrumbs */}
         <nav className="flex items-center gap-2 pt-12" aria-label="Breadcrumb">
           <Link
             href="/"
@@ -59,24 +47,21 @@ export default function CollectionsIndex() {
           >
             Inicio
           </Link>
-          <span className="font-['Inter'] text-[14px] leading-5 text-[#6b6b6b]">
-            /
-          </span>
+          <span className="font-['Inter'] text-[14px] leading-5 text-[#6b6b6b]">/</span>
           <span className="font-['Inter'] text-[14px] font-normal leading-5 tracking-[-0.15px] text-[#2d2d2d]">
             Colecciones
           </span>
         </nav>
 
         <h1 className="mt-10 font-['Inter'] text-[36px] font-semibold leading-[44px] tracking-[-0.75px] text-[#2d2d2d]">
-          Nuestras Colecciones
+          {pageTitle}
         </h1>
         <p className="mt-2 font-['Inter'] text-[16px] font-normal leading-6 tracking-[-0.31px] text-[#6b6b6b]">
-          Encuentra el calzado barefoot perfecto para cada ocasión
+          {pageSubtitle}
         </p>
 
-        {/* Collections Grid */}
         <div className="mt-12 mb-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {COLLECTIONS.map((collection) => (
+          {collections.map((collection) => (
             <Link
               key={collection.slug}
               href={`/colecciones/${collection.slug}`}

@@ -61,7 +61,7 @@ $children = [
     'AdminChettoBarefoot'    => ['parent' => 'AdminChettoHomeParent',   'name' => 'Las 3 Claves',          'pos' => 4],
     'AdminChettoFamilias'    => ['parent' => 'AdminChettoHomeParent',   'name' => 'Familias Felices',      'pos' => 5],
     'AdminChettoWhyBarefoot' => ['parent' => 'AdminChettoHomeParent',   'name' => 'Por que Barefoot',      'pos' => 6],
-    'AdminChettoCollections' => ['parent' => 'AdminChettoCollParent',   'name' => 'Banner CTA',            'pos' => 0],
+    'AdminChettoCollections' => ['parent' => 'AdminChettoCollParent',   'name' => 'Pagina y Tarjetas',     'pos' => 0],
     'AdminChettoFooter'      => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Footer y Newsletter',   'pos' => 0],
     'AdminChettoContent'     => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Bloques de Contenido',  'pos' => 1],
 ];
