@@ -118,6 +118,10 @@ export interface HomepageConfig {
   announce_stores_url: string;
   testimonials_title: string;
   testimonials_subtitle: string;
+  collection_cta_title: string;
+  collection_cta_description: string;
+  collection_cta_text: string;
+  collection_cta_link: string;
   footer_description: string;
   footer_phone: string;
   footer_email: string;

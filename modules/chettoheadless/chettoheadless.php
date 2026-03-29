@@ -81,16 +81,16 @@ class ChettoHeadless extends Module
         }
 
         $tabs = [
-            'AdminChettoSlides' => 'Slides del Hero',
-            'AdminChettoBenefits' => 'Beneficios',
-            'AdminChettoCategories' => 'Categorías Homepage',
-            'AdminChettoProducts' => 'Productos Homepage',
-            'AdminChettoBarefoot' => 'Las 3 Claves',
-            'AdminChettoFamilias' => 'Familias Felices',
-            'AdminChettoWhyBarefoot' => '¿Por qué Barefoot?',
-            'AdminChettoFooter' => 'Footer y Newsletter',
-            'AdminChettoTestimonials' => 'Testimonios',
-            'AdminChettoContent' => 'Bloques de Contenido',
+            'AdminChettoSlides' => '🏠 Slides del Hero',
+            'AdminChettoBenefits' => '🏠 Beneficios',
+            'AdminChettoCategories' => '🏠 Categorías',
+            'AdminChettoProducts' => '🏠 Productos Destacados',
+            'AdminChettoBarefoot' => '🏠 Las 3 Claves',
+            'AdminChettoFamilias' => '🏠 Familias Felices',
+            'AdminChettoWhyBarefoot' => '🏠 ¿Por qué Barefoot?',
+            'AdminChettoCollections' => '📄 Colecciones',
+            'AdminChettoFooter' => '⚙️ Footer y Newsletter',
+            'AdminChettoContent' => '⚙️ Bloques de Contenido',
         ];
 
         foreach ($tabs as $className => $tabName) {
@@ -122,6 +122,7 @@ class ChettoHeadless extends Module
             'AdminChettoBarefoot',
             'AdminChettoFamilias',
             'AdminChettoWhyBarefoot',
+            'AdminChettoCollections',
             'AdminChettoFooter',
             'AdminChettoTestimonials',
             'AdminChettoContent',
@@ -196,6 +197,10 @@ class ChettoHeadless extends Module
             'CHETTO_ANNOUNCE_STORES_URL',
             'CHETTO_TESTIMONIALS_TITLE',
             'CHETTO_TESTIMONIALS_SUBTITLE',
+            'CHETTO_COLLECTION_CTA_TITLE',
+            'CHETTO_COLLECTION_CTA_DESC',
+            'CHETTO_COLLECTION_CTA_TEXT',
+            'CHETTO_COLLECTION_CTA_LINK',
             'CHETTO_FOOTER_DESC',
             'CHETTO_FOOTER_PHONE',
             'CHETTO_FOOTER_EMAIL',
