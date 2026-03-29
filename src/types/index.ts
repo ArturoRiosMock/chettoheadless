@@ -126,6 +126,9 @@ export interface HomepageConfig {
   announce_stores_url: string;
   testimonials_title: string;
   testimonials_subtitle: string;
+  faq_cta_title: string;
+  faq_cta_desc: string;
+  faq_cta_button: string;
   bf_hero_title1: string;
   bf_hero_title2: string;
   bf_hero_desc: string;

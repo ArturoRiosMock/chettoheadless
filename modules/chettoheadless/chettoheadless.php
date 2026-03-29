@@ -106,6 +106,7 @@ class ChettoHeadless extends Module
             'AdminChettoCollections' => ['parent' => 'AdminChettoCollParent', 'name' => 'Pagina y Tarjetas'],
             'AdminChettoFooter'      => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Footer y Newsletter'],
             'AdminChettoContent'     => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Bloques de Contenido'],
+            'AdminChettoFaq'         => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Pagina FAQ'],
         ];
 
         foreach ($children as $className => $config) {
@@ -140,6 +141,7 @@ class ChettoHeadless extends Module
             'AdminChettoFooter',
             'AdminChettoTestimonials',
             'AdminChettoContent',
+            'AdminChettoFaq',
             'AdminChettoProductPage',
             'AdminChettoPorqueBarefoot',
             'AdminChettoHomeParent',
