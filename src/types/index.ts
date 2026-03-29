@@ -126,6 +126,15 @@ export interface HomepageConfig {
   announce_stores_url: string;
   testimonials_title: string;
   testimonials_subtitle: string;
+  pdp_shipping_1: string;
+  pdp_shipping_2: string;
+  pdp_shipping_3: string;
+  pdp_shipping_4: string;
+  pdp_shipping_5: string;
+  pdp_pack_title: string;
+  pdp_pack_desc: string;
+  pdp_related_title: string;
+  pdp_related_subtitle: string;
   collection_page_title: string;
   collection_page_subtitle: string;
   collection_cta_title: string;
