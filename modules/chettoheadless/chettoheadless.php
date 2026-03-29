@@ -65,45 +65,55 @@ class ChettoHeadless extends Module
 
     private function installTabs()
     {
-        $parentTab = new Tab();
-        $parentTab->active = 1;
-        $parentTab->class_name = 'AdminChettoParent';
-        $parentTab->name = [];
-        foreach (Language::getLanguages(true) as $lang) {
-            $parentTab->name[$lang['id_lang']] = 'Chetto CMS';
-        }
-        $parentTab->id_parent = (int) Tab::getIdFromClassName('IMPROVE');
-        $parentTab->module = $this->name;
-        $parentTab->icon = 'edit';
+        $improveId = (int) Tab::getIdFromClassName('IMPROVE');
 
-        if (!$parentTab->add()) {
-            return false;
-        }
-
-        $tabs = [
-            'AdminChettoSlides' => '🏠 Slides del Hero',
-            'AdminChettoBenefits' => '🏠 Beneficios',
-            'AdminChettoCategories' => '🏠 Categorías',
-            'AdminChettoProducts' => '🏠 Productos Destacados',
-            'AdminChettoBarefoot' => '🏠 Las 3 Claves',
-            'AdminChettoFamilias' => '🏠 Familias Felices',
-            'AdminChettoWhyBarefoot' => '🏠 ¿Por qué Barefoot?',
-            'AdminChettoCollections' => '📄 Colecciones',
-            'AdminChettoFooter' => '⚙️ Footer y Newsletter',
-            'AdminChettoContent' => '⚙️ Bloques de Contenido',
+        $parents = [
+            'AdminChettoHomeParent' => ['name' => 'CMS: Home', 'icon' => 'home'],
+            'AdminChettoCollParent' => ['name' => 'CMS: Colecciones', 'icon' => 'list'],
+            'AdminChettoGlobalParent' => ['name' => 'CMS: Global', 'icon' => 'settings'],
         ];
 
-        foreach ($tabs as $className => $tabName) {
+        $parentIds = [];
+        foreach ($parents as $className => $config) {
             $tab = new Tab();
             $tab->active = 1;
             $tab->class_name = $className;
             $tab->name = [];
             foreach (Language::getLanguages(true) as $lang) {
-                $tab->name[$lang['id_lang']] = $tabName;
+                $tab->name[$lang['id_lang']] = $config['name'];
             }
-            $tab->id_parent = (int) Tab::getIdFromClassName('AdminChettoParent');
+            $tab->id_parent = $improveId;
             $tab->module = $this->name;
+            $tab->icon = $config['icon'];
+            if (!$tab->add()) {
+                return false;
+            }
+            $parentIds[$className] = $tab->id;
+        }
 
+        $children = [
+            'AdminChettoSlides'      => ['parent' => 'AdminChettoHomeParent', 'name' => 'Hero Slider'],
+            'AdminChettoBenefits'    => ['parent' => 'AdminChettoHomeParent', 'name' => 'Beneficios'],
+            'AdminChettoCategories'  => ['parent' => 'AdminChettoHomeParent', 'name' => 'Categorias'],
+            'AdminChettoProducts'    => ['parent' => 'AdminChettoHomeParent', 'name' => 'Productos Destacados'],
+            'AdminChettoBarefoot'    => ['parent' => 'AdminChettoHomeParent', 'name' => 'Las 3 Claves'],
+            'AdminChettoFamilias'    => ['parent' => 'AdminChettoHomeParent', 'name' => 'Familias Felices'],
+            'AdminChettoWhyBarefoot' => ['parent' => 'AdminChettoHomeParent', 'name' => 'Por que Barefoot'],
+            'AdminChettoCollections' => ['parent' => 'AdminChettoCollParent', 'name' => 'Banner CTA'],
+            'AdminChettoFooter'      => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Footer y Newsletter'],
+            'AdminChettoContent'     => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Bloques de Contenido'],
+        ];
+
+        foreach ($children as $className => $config) {
+            $tab = new Tab();
+            $tab->active = 1;
+            $tab->class_name = $className;
+            $tab->name = [];
+            foreach (Language::getLanguages(true) as $lang) {
+                $tab->name[$lang['id_lang']] = $config['name'];
+            }
+            $tab->id_parent = $parentIds[$config['parent']];
+            $tab->module = $this->name;
             if (!$tab->add()) {
                 return false;
             }
@@ -126,6 +136,9 @@ class ChettoHeadless extends Module
             'AdminChettoFooter',
             'AdminChettoTestimonials',
             'AdminChettoContent',
+            'AdminChettoHomeParent',
+            'AdminChettoCollParent',
+            'AdminChettoGlobalParent',
             'AdminChettoParent',
         ];
 
