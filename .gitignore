@@ -50,3 +50,5 @@ modules/chettoheadless/views/img/sections/
 
 # cursor
 .cursor/
+
+.vercel

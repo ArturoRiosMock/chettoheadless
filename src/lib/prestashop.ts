@@ -1,5 +1,7 @@
 import type { Product, Category, HomepageContent, HomepageConfig } from "@/types";
 
+const CMS_FETCH_TIMEOUT_MS = 12_000;
+
 /**
  * PrestaShop Webservice API client.
  * Ready to connect when PRESTASHOP_API_KEY and NEXT_PUBLIC_PRESTASHOP_URL
@@ -14,13 +16,26 @@ class PrestashopClient {
     this.#apiKey = process.env.PRESTASHOP_API_KEY || "";
   }
 
+  #requirePublicCmsBase(): string {
+    const base = this.#baseUrl.trim().replace(/\/$/, "");
+    if (!base || !/^https?:\/\//i.test(base)) {
+      throw new Error("NEXT_PUBLIC_PRESTASHOP_URL no configurada o no es una URL absoluta");
+    }
+    if (process.env.VERCEL === "1" && /localhost|127\.0\.0\.1/i.test(base)) {
+      throw new Error("PrestaShop en localhost no es alcanzable desde Vercel; usa una URL pública HTTPS");
+    }
+    return base;
+  }
+
   async #fetch(endpoint: string) {
-    const url = `${this.#baseUrl}/api/${endpoint}?output_format=JSON`;
+    const base = this.#requirePublicCmsBase();
+    const url = `${base}/api/${endpoint}?output_format=JSON`;
     const response = await fetch(url, {
       headers: {
         Authorization: `Basic ${Buffer.from(`${this.#apiKey}:`).toString("base64")}`,
       },
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(CMS_FETCH_TIMEOUT_MS),
     });
 
     if (!response.ok) {
@@ -46,9 +61,11 @@ class PrestashopClient {
   }
 
   async getHomepageContent(): Promise<HomepageContent> {
-    const url = `${this.#baseUrl}/index.php?fc=module&module=chettoheadless&controller=api`;
+    const base = this.#requirePublicCmsBase();
+    const url = `${base}/index.php?fc=module&module=chettoheadless&controller=api`;
     const response = await fetch(url, {
       cache: "no-store",
+      signal: AbortSignal.timeout(CMS_FETCH_TIMEOUT_MS),
     });
 
     if (!response.ok) {
@@ -59,24 +76,32 @@ class PrestashopClient {
   }
 
   async subscribeNewsletter(email: string): Promise<{ success: boolean; message: string }> {
-    const url = `${this.#baseUrl}/index.php?fc=module&module=chettoheadless&controller=api&action=newsletter`;
-    const response = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    try {
+      const base = this.#requirePublicCmsBase();
+      const url = `${base}/index.php?fc=module&module=chettoheadless&controller=api&action=newsletter`;
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+        signal: AbortSignal.timeout(CMS_FETCH_TIMEOUT_MS),
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        return { success: false, message: "Error de conexión" };
+      }
+
+      return response.json();
+    } catch {
       return { success: false, message: "Error de conexión" };
     }
-
-    return response.json();
   }
 
   async getSiteConfig(): Promise<HomepageConfig> {
-    const url = `${this.#baseUrl}/index.php?fc=module&module=chettoheadless&controller=api`;
+    const base = this.#requirePublicCmsBase();
+    const url = `${base}/index.php?fc=module&module=chettoheadless&controller=api`;
     const response = await fetch(url, {
       next: { revalidate: 300 },
+      signal: AbortSignal.timeout(CMS_FETCH_TIMEOUT_MS),
     });
 
     if (!response.ok) {
