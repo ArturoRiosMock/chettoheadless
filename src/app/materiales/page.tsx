@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prestashop } from "@/lib/prestashop";
+import CmsAlternatingBlocks from "@/components/cms/CmsAlternatingBlocks";
+import type { PageBlockApi } from "@/types";
 
 export const metadata: Metadata = {
   title: "Materiales - Calzado Barefoot",
@@ -43,8 +45,20 @@ const CERTIFICATIONS = [
 
 export default async function MaterialesPage() {
   let cms;
-  try { cms = await prestashop.getHomepageContent(); } catch { cms = null; }
+  try {
+    cms = await prestashop.getCachedHomepageContent();
+  } catch {
+    cms = null;
+  }
   const cfg = cms?.config;
+  const pageBlocks = cms?.page_blocks?.materiales ?? [];
+  const mainBlocks: PageBlockApi[] = pageBlocks.filter(
+    (b) => !b.block_key || !["certifications", "commit"].includes(b.block_key)
+  );
+  const certBlock = pageBlocks.find((b) => b.block_key === "certifications");
+  const certMeta = certBlock?.meta as { items?: { name: string; desc: string }[] } | null;
+  const certItems: { name: string; desc: string }[] =
+    certMeta?.items && certMeta.items.length > 0 ? certMeta.items : CERTIFICATIONS;
 
   const pageTitle = cfg?.mat_title || "Materiales";
   const pageSubtitle = cfg?.mat_subtitle || "Materiales naturales, sostenibles e hipoalergénicos con la salud de tus hijos y el planeta.";
@@ -81,24 +95,38 @@ export default async function MaterialesPage() {
 
       {/* Materials */}
       <section className="py-16">
-        <div className="mx-auto max-w-[1354px] px-6 flex flex-col gap-20">
-          {MATERIALS.map((mat, i) => (
-            <div key={i} className={`grid grid-cols-1 items-center gap-12 lg:grid-cols-2 ${mat.imagePosition === "left" ? "" : "lg:[&>*:first-child]:order-2"}`}>
-              <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-[#f0ede8]" />
-              <div>
-                <h3 className="font-['Inter'] text-[24px] font-medium leading-8 tracking-[0.07px] text-[#2d2d2d]">{mat.title}</h3>
-                <p className="mt-3 font-['Inter'] text-[16px] leading-[26px] tracking-[-0.31px] text-[#6b6b6b]">{mat.description}</p>
-                <ul className="mt-6 flex flex-col gap-2">
-                  {mat.features.map((f, j) => (
-                    <li key={j} className="flex items-center gap-2 font-['Inter'] text-[14px] leading-5 tracking-[-0.15px] text-[#6b6b6b]">
-                      <span className="text-[#c4b5a0]">•</span> {f}
-                    </li>
-                  ))}
-                </ul>
+        {mainBlocks.length > 0 ? (
+          <CmsAlternatingBlocks blocks={mainBlocks} />
+        ) : (
+          <div className="mx-auto flex max-w-[1354px] flex-col gap-20 px-6">
+            {MATERIALS.map((mat, i) => (
+              <div
+                key={i}
+                className={`grid grid-cols-1 items-center gap-12 lg:grid-cols-2 ${mat.imagePosition === "left" ? "" : "lg:[&>*:first-child]:order-2"}`}
+              >
+                <div className="aspect-[4/3] overflow-hidden rounded-2xl bg-[#f0ede8]" />
+                <div>
+                  <h3 className="font-['Inter'] text-[24px] font-medium leading-8 tracking-[0.07px] text-[#2d2d2d]">
+                    {mat.title}
+                  </h3>
+                  <p className="mt-3 font-['Inter'] text-[16px] leading-[26px] tracking-[-0.31px] text-[#6b6b6b]">
+                    {mat.description}
+                  </p>
+                  <ul className="mt-6 flex flex-col gap-2">
+                    {mat.features.map((f, j) => (
+                      <li
+                        key={j}
+                        className="flex items-center gap-2 font-['Inter'] text-[14px] leading-5 tracking-[-0.15px] text-[#6b6b6b]"
+                      >
+                        <span className="text-[#c4b5a0]">•</span> {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Certifications */}
@@ -106,7 +134,7 @@ export default async function MaterialesPage() {
         <div className="mx-auto max-w-[1354px] px-6">
           <h2 className="text-center font-['Inter'] text-[30px] font-medium leading-9 tracking-[0.4px] text-[#2d2d2d]">Certificaciones</h2>
           <div className="mt-10 grid grid-cols-2 gap-8 lg:grid-cols-4">
-            {CERTIFICATIONS.map((cert, i) => (
+            {certItems.map((cert, i) => (
               <div key={i} className="flex flex-col items-center gap-3 text-center">
                 <div className="flex size-16 items-center justify-center rounded-full bg-[#f0ede8]">
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6Z" fill="#c4b5a0"/></svg>

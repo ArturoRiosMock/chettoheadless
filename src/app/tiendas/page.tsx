@@ -1,35 +1,52 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prestashop } from "@/lib/prestashop";
+import type { StoreApi } from "@/types";
 
 export const metadata: Metadata = {
   title: "Nuestras Tiendas",
 };
 
-const STORES = [
+const STORES_FALLBACK: StoreApi[] = [
   {
+    id: 1,
     name: "Chetto Madrid Centro",
     address: "Calle Gran Vía, 123, 28013 Madrid",
+    address_line1: "Calle Gran Vía, 123, 28013 Madrid",
+    address_line2: "",
     phone: "+34 910 123 456",
-    mapsQuery: "Calle Gran Vía 123, 28013 Madrid",
+    maps_query: "Calle Gran Vía 123, 28013 Madrid",
+    image: "",
   },
   {
+    id: 2,
     name: "Chetto Barcelona",
     address: "Passeig de Gràcia, 89, 08008 Barcelona",
+    address_line1: "Passeig de Gràcia, 89, 08008 Barcelona",
+    address_line2: "",
     phone: "+34 930 456 789",
-    mapsQuery: "Passeig de Gràcia 89, 08008 Barcelona",
+    maps_query: "Passeig de Gràcia 89, 08008 Barcelona",
+    image: "",
   },
   {
+    id: 3,
     name: "Chetto Valencia",
     address: "Calle Colón, 45, 46004 Valencia",
+    address_line1: "Calle Colón, 45, 46004 Valencia",
+    address_line2: "",
     phone: "+34 960 789 012",
-    mapsQuery: "Calle Colón 45, 46004 Valencia",
+    maps_query: "Calle Colón 45, 46004 Valencia",
+    image: "",
   },
   {
+    id: 4,
     name: "Chetto Sevilla",
     address: "Avenida de la Constitución, 12, 41001 Sevilla",
+    address_line1: "Avenida de la Constitución, 12, 41001 Sevilla",
+    address_line2: "",
     phone: "+34 950 345 678",
-    mapsQuery: "Avenida de la Constitución 12, 41001 Sevilla",
+    maps_query: "Avenida de la Constitución 12, 41001 Sevilla",
+    image: "",
   },
 ];
 
@@ -76,13 +93,18 @@ function PhoneIcon() {
 
 export default async function TiendasPage() {
   let storesTitle = "Mapa de tiendas";
+  let stores: StoreApi[] = STORES_FALLBACK;
   try {
-    const cms = await prestashop.getHomepageContent();
+    const cms = await prestashop.getCachedHomepageContent();
     if (cms?.config?.stores_title) {
       storesTitle = cms.config.stores_title;
     }
+    if (cms?.stores && cms.stores.length > 0) {
+      stores = cms.stores;
+    }
   } catch {
     storesTitle = "Mapa de tiendas";
+    stores = STORES_FALLBACK;
   }
 
   return (
@@ -101,9 +123,9 @@ export default async function TiendasPage() {
             </div>
           </div>
           <ul className="flex list-none flex-col gap-4 p-0">
-            {STORES.map((store) => (
+            {stores.map((store) => (
               <li
-                key={store.name}
+                key={store.id}
                 className="rounded-2xl border border-[#e8e6e3] p-6"
               >
                 <div className="flex gap-4">
@@ -115,17 +137,19 @@ export default async function TiendasPage() {
                       {store.name}
                     </h2>
                     <p className="mt-2 text-[#6b6b6b]">{store.address}</p>
-                    <div className="mt-3 flex items-center gap-2">
-                      <PhoneIcon />
-                      <a
-                        href={`tel:${store.phone.replace(/\s/g, "")}`}
-                        className="text-[#6b6b6b] underline-offset-2 hover:text-[#c4b5a0] hover:underline"
-                      >
-                        {store.phone}
-                      </a>
-                    </div>
+                    {store.phone ? (
+                      <div className="mt-3 flex items-center gap-2">
+                        <PhoneIcon />
+                        <a
+                          href={`tel:${store.phone.replace(/\s/g, "")}`}
+                          className="text-[#6b6b6b] underline-offset-2 hover:text-[#c4b5a0] hover:underline"
+                        >
+                          {store.phone}
+                        </a>
+                      </div>
+                    ) : null}
                     <Link
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.mapsQuery)}`}
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(store.maps_query || store.address)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-4 inline-flex items-center justify-center rounded-xl border border-[#c4b5a0] px-4 py-2 text-sm font-medium text-[#c4b5a0] transition-colors hover:bg-[#f0ede8]"

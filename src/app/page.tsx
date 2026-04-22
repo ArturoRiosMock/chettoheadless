@@ -82,9 +82,19 @@ export default async function Home() {
     ? cms.featured_products
     : FEATURED_PRODUCTS;
 
-  const favoritesProducts = cms?.favorites_products?.length
-    ? cms.favorites_products
-    : FAVORITE_PRODUCTS;
+  let favoritesProducts =
+    cms?.favorites_products && cms.favorites_products.length > 0
+      ? cms.favorites_products
+      : FAVORITE_PRODUCTS;
+
+  try {
+    const fromCatalog = await prestashop.getProductsForCards({ limit: 12 });
+    if (fromCatalog.length > 0) {
+      favoritesProducts = fromCatalog;
+    }
+  } catch {
+    /* sin clave WS o error API: se mantiene CMS o mock */
+  }
 
   const cfg = cms?.config;
 

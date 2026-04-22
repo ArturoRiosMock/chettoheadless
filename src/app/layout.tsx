@@ -5,6 +5,7 @@ import Header from "@/components/layout/Header";
 import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
 import { prestashop } from "@/lib/prestashop";
+import type { SiteLayoutConfig } from "@/lib/prestashop";
 import "./globals.css";
 
 const inter = Inter({
@@ -61,7 +62,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let cfg;
+  let cfg: SiteLayoutConfig | null = null;
   try {
     cfg = await prestashop.getSiteConfig();
   } catch {
@@ -98,8 +99,11 @@ export default async function RootLayout({
           storesText={cfg?.announce_stores_text}
           storesUrl={cfg?.announce_stores_url}
         />
-        <Header />
-        <Navigation />
+        <Header
+          logoUrl={cfg?.header_logo_url || undefined}
+          searchPlaceholder={cfg?.search_placeholder || undefined}
+        />
+        <Navigation items={cfg?.nav_items?.length ? cfg.nav_items : undefined} />
         <main>{children}</main>
         <Footer
           newsletterTitle={cfg?.newsletter_title || undefined}
@@ -108,6 +112,8 @@ export default async function RootLayout({
           phone={cfg?.footer_phone || undefined}
           email={cfg?.footer_email || undefined}
           location={cfg?.footer_location || undefined}
+          footerColumns={cfg?.footer_columns?.length ? cfg.footer_columns : undefined}
+          footerLogoUrl={cfg?.footer_logo_url || undefined}
         />
       </body>
     </html>

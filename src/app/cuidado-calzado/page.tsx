@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prestashop } from "@/lib/prestashop";
+import CmsStackedBlocks from "@/components/cms/CmsStackedBlocks";
 
 export const metadata: Metadata = {
   title: "Cuidado del Calzado - Calzado Barefoot",
@@ -41,8 +42,13 @@ const AVOID = [
 
 export default async function CuidadoCalzadoPage() {
   let cms;
-  try { cms = await prestashop.getHomepageContent(); } catch { cms = null; }
+  try {
+    cms = await prestashop.getCachedHomepageContent();
+  } catch {
+    cms = null;
+  }
   const cfg = cms?.config;
+  const cmsBlocks = cms?.page_blocks?.cuidado ?? [];
 
   const introTitle = cfg?.care_intro_title || "Cuida tus zapatos, cuidan de tus hijos";
   const introDesc = cfg?.care_intro_desc || "El calzado barefoot está fabricado con materiales naturales de alta calidad que requieren un mantenimiento específico. Siguiendo estos sencillos consejos, prolongarás la vida útil de tus zapatos y mantendrás sus propiedades barefoot intactas.";
@@ -67,6 +73,14 @@ export default async function CuidadoCalzadoPage() {
           </div>
         </div>
       </div>
+
+      {cmsBlocks.length > 0 ? (
+        <section className="mt-10">
+          <div className="mx-auto max-w-[1354px] px-6">
+            <CmsStackedBlocks blocks={cmsBlocks} />
+          </div>
+        </section>
+      ) : null}
 
       {/* Intro */}
       <section className="mt-16 bg-white py-16">

@@ -17,8 +17,13 @@ function cardBadgeLabel(children: ReactNode) {
 }
 
 export default function ProductCard({ product, showColors = true }: ProductCardProps) {
+  const pdpHref =
+    product.prestashopProductId != null
+      ? `/producto/${product.prestashopProductId}`
+      : `/producto/${encodeURIComponent(product.slug)}`;
+
   return (
-    <Link href={`/producto/${product.slug}`} className="block">
+    <Link href={pdpHref} className="block">
       <div className="flex flex-col gap-4">
         <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[16px] bg-[#f7f6f4]">
           {product.image ? (

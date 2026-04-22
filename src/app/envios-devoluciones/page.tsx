@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prestashop } from "@/lib/prestashop";
+import CmsStackedBlocks from "@/components/cms/CmsStackedBlocks";
 
 export const metadata: Metadata = {
   title: "Envíos y Devoluciones - Calzado Barefoot",
@@ -30,8 +31,13 @@ const STEPS = [
 
 export default async function EnviosPage() {
   let cms;
-  try { cms = await prestashop.getHomepageContent(); } catch { cms = null; }
+  try {
+    cms = await prestashop.getCachedHomepageContent();
+  } catch {
+    cms = null;
+  }
   const cfg = cms?.config;
+  const cmsBlocks = cms?.page_blocks?.envios ?? [];
 
   const freeBanner = cfg?.env_free_text || "Envío Gratis en pedidos superiores a 60€";
   const freeSub = cfg?.env_free_sub || "Para España Peninsular, válido para envío estándar";
@@ -55,6 +61,14 @@ export default async function EnviosPage() {
           </div>
         </div>
       </div>
+
+      {cmsBlocks.length > 0 ? (
+        <section className="mt-10">
+          <div className="mx-auto max-w-[1354px] px-6">
+            <CmsStackedBlocks blocks={cmsBlocks} />
+          </div>
+        </section>
+      ) : null}
 
       {/* Free Shipping Banner */}
       <section className="mt-12">

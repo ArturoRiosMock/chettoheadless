@@ -3,18 +3,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "@/data/mock";
+import type { NavItemApi } from "@/types";
 
-export default function Navigation() {
+interface NavigationProps {
+  items?: NavItemApi[];
+}
+
+export default function Navigation({ items }: NavigationProps) {
   const pathname = usePathname();
+  const nav = items?.length ? items : NAV_ITEMS.map((item, i) => ({ id: i, ...item }));
 
   return (
     <nav className="h-14 bg-white">
       <div className="mx-auto flex h-14 max-w-[1354px] px-6">
         <ul className="flex h-full w-full items-stretch justify-center gap-8">
-          {NAV_ITEMS.map((item) => {
+          {nav.map((item) => {
             const isActive = pathname === item.href;
+            const key = "id" in item && item.id != null ? String(item.id) : item.href;
             return (
-              <li key={item.href} className="flex h-full">
+              <li key={key} className="flex h-full">
                 <Link
                   href={item.href}
                   className="flex h-full min-h-14 flex-col text-sm font-medium tracking-[0.1996px] text-[#2d2d2d]"

@@ -6,6 +6,7 @@ import { Phone, Mail, MapPin } from "lucide-react";
 import { useState, useTransition } from "react";
 import { subscribeNewsletter } from "@/app/actions";
 import { FOOTER_COLUMNS } from "@/data/mock";
+import type { FooterColumn } from "@/types";
 
 interface FooterProps {
   newsletterTitle?: string;
@@ -14,6 +15,8 @@ interface FooterProps {
   phone?: string;
   email?: string;
   location?: string;
+  footerColumns?: FooterColumn[];
+  footerLogoUrl?: string;
 }
 
 export default function Footer({
@@ -23,7 +26,10 @@ export default function Footer({
   phone = "660 132 049",
   email = "tienda@chetto.es",
   location = "Madrid, España",
+  footerColumns,
+  footerLogoUrl,
 }: FooterProps) {
+  const columns = footerColumns?.length ? footerColumns : FOOTER_COLUMNS;
   const [emailInput, setEmailInput] = useState("");
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -95,13 +101,24 @@ export default function Footer({
           {/* Brand Column */}
           <div>
             <Link href="/" className="inline-block">
-              <Image
-                src="/images/logo-chetto-footer.png"
-                alt="Chetto - Barefoot Shoes"
-                width={95}
-                height={64}
-                className="h-16 w-auto object-contain"
-              />
+              {footerLogoUrl ? (
+                <Image
+                  src={footerLogoUrl}
+                  alt="Chetto - Barefoot Shoes"
+                  width={95}
+                  height={64}
+                  className="h-16 w-auto object-contain"
+                  unoptimized
+                />
+              ) : (
+                <Image
+                  src="/images/logo-chetto-footer.png"
+                  alt="Chetto - Barefoot Shoes"
+                  width={95}
+                  height={64}
+                  className="h-16 w-auto object-contain"
+                />
+              )}
             </Link>
             <p className="mt-6 max-w-[460px] font-['Inter'] text-[16px] font-normal leading-[26px] tracking-[-0.31px] text-[rgba(255,255,255,0.7)]">
               {footerDescription}
@@ -129,7 +146,7 @@ export default function Footer({
           </div>
 
           {/* Link Columns */}
-          {FOOTER_COLUMNS.map((column) => (
+          {columns.map((column) => (
             <nav key={column.title} aria-label={column.title}>
               <h3 className="font-['Inter'] text-[16px] font-medium leading-6 tracking-[-0.31px] text-white">
                 {column.title}

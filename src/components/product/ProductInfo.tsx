@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CmsImage from "@/components/ui/CmsImage";
+import type { PdpSizeVariant } from "@/types";
 
 interface ShippingIcon {
   label: string;
@@ -15,11 +16,12 @@ interface ProductColor {
 }
 
 interface ProductInfoProps {
+  productId: number;
   name: string;
   price: number;
   newsletterPrice?: number;
   colors: ProductColor[];
-  sizes: string[];
+  sizeVariants: PdpSizeVariant[];
   shippingIcons: ShippingIcon[];
 }
 
@@ -41,13 +43,89 @@ function ShippingIconSvg({ type }: { type: string }) {
   }
 }
 
-export default function ProductInfo({ name, price, newsletterPrice, colors, sizes, shippingIcons }: ProductInfoProps) {
+export default function ProductInfo({
+  productId,
+  name,
+  price,
+  newsletterPrice,
+  colors,
+  sizeVariants,
+  shippingIcons,
+}: ProductInfoProps) {
   const [selectedColor, setSelectedColor] = useState(0);
-  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedAttrId, setSelectedAttrId] = useState(() =>
+    sizeVariants.length === 1 ? String(sizeVariants[0].idProductAttribute) : "",
+  );
+  const [cartLoading, setCartLoading] = useState(false);
+  const [cartMessage, setCartMessage] = useState<{
+    type: "ok" | "err";
+    text: string;
+    recoverUrl?: string;
+  } | null>(null);
+
+  const isDemoProduct = productId < 1;
+
+  useEffect(() => {
+    setCartMessage(null);
+    if (sizeVariants.length === 1) {
+      setSelectedAttrId(String(sizeVariants[0].idProductAttribute));
+    } else {
+      setSelectedAttrId("");
+    }
+  }, [sizeVariants]);
+
+  async function handleAddToCart() {
+    setCartMessage(null);
+    if (isDemoProduct) {
+      setCartMessage({ type: "err", text: "Producto de demostración: usa un producto del catálogo PrestaShop." });
+      return;
+    }
+    if (selectedAttrId === "") {
+      setCartMessage({ type: "err", text: "Selecciona una talla." });
+      return;
+    }
+    const idProductAttribute = Number.parseInt(selectedAttrId, 10);
+    if (!Number.isFinite(idProductAttribute) || idProductAttribute < 0) {
+      setCartMessage({ type: "err", text: "Selecciona una talla válida." });
+      return;
+    }
+
+    setCartLoading(true);
+    try {
+      const res = await fetch("/api/cart/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          idProduct: productId,
+          idProductAttribute,
+          quantity: 1,
+        }),
+      });
+      const data = (await res.json()) as { ok?: boolean; error?: string; recoverUrl?: string };
+      if (!res.ok || !data.ok) {
+        setCartMessage({
+          type: "err",
+          text: data.error || "No se pudo añadir al carrito. Revisa la clave del webservice y permisos POST en carts.",
+        });
+        return;
+      }
+      setCartMessage({
+        type: "ok",
+        text: "Producto añadido al carrito.",
+        recoverUrl: typeof data.recoverUrl === "string" && data.recoverUrl ? data.recoverUrl : undefined,
+      });
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("chetto:cart-updated"));
+      }
+    } catch {
+      setCartMessage({ type: "err", text: "Error de red al contactar con la tienda." });
+    } finally {
+      setCartLoading(false);
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Name & Price */}
       <div>
         <h1 className="font-['Inter'] text-[30px] font-medium leading-9 tracking-[0.4px] text-[#2d2d2d]">
           {name}
@@ -63,7 +141,6 @@ export default function ProductInfo({ name, price, newsletterPrice, colors, size
         )}
       </div>
 
-      {/* Color Selector */}
       <div className="flex flex-col gap-3">
         <p className="font-['Inter'] text-[14px] leading-5 tracking-[-0.15px] text-[#2d2d2d]">
           Color: <span className="text-[#6b6b6b]">{colors[selectedColor]?.name}</span>
@@ -88,7 +165,6 @@ export default function ProductInfo({ name, price, newsletterPrice, colors, size
         </div>
       </div>
 
-      {/* Size Selector */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <span className="font-['Inter'] text-[14px] leading-5 tracking-[-0.15px] text-[#2d2d2d]">Talla</span>
@@ -97,24 +173,48 @@ export default function ProductInfo({ name, price, newsletterPrice, colors, size
           </button>
         </div>
         <select
-          value={selectedSize}
-          onChange={(e) => setSelectedSize(e.target.value)}
+          value={selectedAttrId}
+          onChange={(e) => setSelectedAttrId(e.target.value)}
           className="h-[52px] w-full rounded-[10px] border-2 border-[#e8e6e3] bg-white px-4 font-['Inter'] text-[14px] text-[#2d2d2d] outline-none focus:border-[#2d2d2d]"
+          aria-label="Talla"
         >
-          <option value="">Seleccionar talla</option>
-          {sizes.map((size) => (
-            <option key={size} value={size}>{size}</option>
+          {sizeVariants.length > 1 ? <option value="">Seleccionar talla</option> : null}
+          {sizeVariants.map((v) => (
+            <option key={`${v.idProductAttribute}-${v.label}`} value={String(v.idProductAttribute)}>
+              {v.label}
+            </option>
           ))}
         </select>
       </div>
 
-      {/* Add to Cart */}
+      {cartMessage ? (
+        <div
+          role="status"
+          className={`flex flex-col gap-1 font-['Inter'] text-[14px] leading-5 ${
+            cartMessage.type === "ok" ? "text-[#2d6a4f]" : "text-[#b42318]"
+          }`}
+        >
+          <p>{cartMessage.text}</p>
+          {cartMessage.type === "ok" && cartMessage.recoverUrl ? (
+            <a
+              href={cartMessage.recoverUrl}
+              className="font-medium text-[#2d6a4f] underline underline-offset-2 hover:opacity-90"
+              rel="noopener noreferrer"
+            >
+              Ver carrito en la tienda (PrestaShop)
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+
       <div className="flex flex-col gap-3">
         <button
           type="button"
-          className="flex h-14 w-full items-center justify-center rounded-full bg-[#2d2d2d] font-['Inter'] text-[16px] font-medium tracking-[-0.31px] text-white transition-colors hover:bg-[#1a1a1a]"
+          disabled={cartLoading || isDemoProduct}
+          onClick={() => void handleAddToCart()}
+          className="flex h-14 w-full items-center justify-center rounded-full bg-[#2d2d2d] font-['Inter'] text-[16px] font-medium tracking-[-0.31px] text-white transition-colors hover:bg-[#1a1a1a] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          AÑADIR AL CARRITO
+          {cartLoading ? "Añadiendo…" : "AÑADIR AL CARRITO"}
         </button>
         <button
           type="button"
@@ -124,7 +224,6 @@ export default function ProductInfo({ name, price, newsletterPrice, colors, size
         </button>
       </div>
 
-      {/* Shipping Icons */}
       <div className="flex flex-wrap gap-x-4 gap-y-3 border-t border-[#e8e6e3] pt-6">
         {shippingIcons.map((item, i) => (
           <div key={i} className="flex items-center gap-2">

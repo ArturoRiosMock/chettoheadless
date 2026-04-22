@@ -2,19 +2,31 @@
 
 import { useState, useMemo } from "react";
 import { ChevronDown, Search } from "lucide-react";
+import type { FaqCategoryApi } from "@/types";
 
-interface FaqItem {
-  question: string;
-  answer: string;
+function stripHtml(s: string) {
+  return s.replace(/<[^>]*>/g, " ");
 }
 
-interface FaqCategory {
-  category: string;
-  items: FaqItem[];
+function FaqAnswer({ htmlOrText }: { htmlOrText: string }) {
+  const looksLikeHtml = /<\/?[a-z][\s\S]*>/i.test(htmlOrText);
+  if (looksLikeHtml) {
+    return (
+      <div
+        className="font-['Inter'] text-[16px] font-normal leading-[26px] tracking-[-0.31px] text-[#2d2d2d]/70 [&_a]:text-[#8b7e6a] [&_a]:underline [&_p+p]:mt-2"
+        dangerouslySetInnerHTML={{ __html: htmlOrText }}
+      />
+    );
+  }
+  return (
+    <p className="font-['Inter'] text-[16px] font-normal leading-[26px] tracking-[-0.31px] text-[#2d2d2d]/70">
+      {htmlOrText}
+    </p>
+  );
 }
 
 interface FaqClientProps {
-  categories: FaqCategory[];
+  categories: FaqCategoryApi[];
 }
 
 export default function FaqClient({ categories }: FaqClientProps) {
@@ -31,11 +43,10 @@ export default function FaqClient({ categories }: FaqClientProps) {
       .map((cat) => ({
         ...cat,
         items: q
-          ? cat.items.filter(
-              (item) =>
-                item.question.toLowerCase().includes(q) ||
-                item.answer.toLowerCase().includes(q)
-            )
+          ? cat.items.filter((item) => {
+              const a = `${item.question} ${stripHtml(item.answer)}`.toLowerCase();
+              return a.includes(q);
+            })
           : cat.items,
       }))
       .filter((cat) => cat.items.length > 0);
@@ -82,7 +93,10 @@ export default function FaqClient({ categories }: FaqClientProps) {
             </h2>
             <div className="mt-6 flex flex-col gap-4">
               {cat.items.map((item) => {
-                const key = `${cat.category}-${item.question}`;
+                const key =
+                  item.id != null
+                    ? `faq-${item.id}`
+                    : `${cat.category}-${item.question}`;
                 const isOpen = openIndex === key;
                 return (
                   <div
@@ -103,9 +117,7 @@ export default function FaqClient({ categories }: FaqClientProps) {
                     </button>
                     {isOpen && (
                       <div className="px-6 pb-6">
-                        <p className="font-['Inter'] text-[16px] font-normal leading-[26px] tracking-[-0.31px] text-[#2d2d2d]/70">
-                          {item.answer}
-                        </p>
+                        <FaqAnswer htmlOrText={item.answer} />
                       </div>
                     )}
                   </div>

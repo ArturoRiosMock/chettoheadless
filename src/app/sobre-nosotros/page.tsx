@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { prestashop } from "@/lib/prestashop";
+import CmsStackedBlocks from "@/components/cms/CmsStackedBlocks";
 
 export const metadata: Metadata = {
   title: "Sobre Nosotros - Chetto",
@@ -28,11 +29,12 @@ const VALORES = [
 export default async function SobreNosotrosPage() {
   let cms;
   try {
-    cms = await prestashop.getHomepageContent();
+    cms = await prestashop.getCachedHomepageContent();
   } catch {
     cms = null;
   }
   const cfg = cms?.config;
+  const cmsBlocks = cms?.page_blocks?.sobre_nosotros ?? [];
 
   const ctaTitle =
     cfg?.about_cta_title ??
@@ -47,6 +49,12 @@ export default async function SobreNosotrosPage() {
             Inicio de Chetto
           </Link>
         </p>
+
+        {cmsBlocks.length > 0 ? (
+          <section className="mt-10">
+            <CmsStackedBlocks blocks={cmsBlocks} />
+          </section>
+        ) : null}
 
         <header className="mt-10 text-center">
           <span className="inline-block rounded-full border border-[#e8e6e3] bg-white px-4 py-1.5 text-[12px] font-medium tracking-wide text-[#c4b5a0]">

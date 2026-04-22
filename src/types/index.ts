@@ -1,5 +1,7 @@
 export interface Product {
   id: number;
+  /** id_product de PrestaShop cuando el dato viene del webservice (enlace fiable a /producto/[id]). */
+  prestashopProductId?: number;
   name: string;
   slug: string;
   price: number;
@@ -74,6 +76,10 @@ export interface NavItem {
   href: string;
 }
 
+export interface NavItemApi extends NavItem {
+  id: number;
+}
+
 export interface FooterColumn {
   title: string;
   links: { label: string; href: string }[];
@@ -85,6 +91,38 @@ export interface ContentBlock {
   description: string;
   icon?: string;
   extra_text?: string;
+}
+
+export interface FaqItemApi {
+  id?: number;
+  question: string;
+  answer: string;
+}
+
+export interface FaqCategoryApi {
+  category: string;
+  items: FaqItemApi[];
+}
+
+export interface PageBlockApi {
+  id: number;
+  block_key: string;
+  title: string;
+  body: string;
+  image: string;
+  meta: Record<string, unknown> | null;
+  position: number;
+}
+
+export interface StoreApi {
+  id: number;
+  name: string;
+  address: string;
+  address_line1: string;
+  address_line2: string;
+  phone: string;
+  maps_query: string;
+  image: string;
 }
 
 export interface HomepageConfig {
@@ -196,6 +234,9 @@ export interface HomepageConfig {
   stores_title?: string;
   about_cta_title?: string;
   about_cta_desc?: string;
+  header_logo_url?: string;
+  footer_logo_url?: string;
+  search_placeholder?: string;
 }
 
 export interface HomepageContent {
@@ -211,5 +252,33 @@ export interface HomepageContent {
   collections: Collection[];
   featured_products: Product[];
   favorites_products: Product[];
+  nav_items?: NavItemApi[];
+  footer_columns?: FooterColumn[];
+  faq_categories?: FaqCategoryApi[];
+  page_blocks?: Record<string, PageBlockApi[]>;
+  stores?: StoreApi[];
   config: HomepageConfig;
+}
+
+export interface PdpSizeVariant {
+  idProductAttribute: number;
+  label: string;
+}
+
+export interface PdpProductView {
+  id: number;
+  name: string;
+  slug: string;
+  price: number;
+  description: string;
+  shortDescription: string;
+  images: string[];
+  colors: { name: string; hex: string; image: string }[];
+  /** Variantes (talla): id para el carrito PrestaShop + etiqueta en UI */
+  sizeVariants: PdpSizeVariant[];
+  materials: string;
+  care: string;
+  categoryName: string;
+  categorySlug: string;
+  newsletterPrice?: number;
 }
