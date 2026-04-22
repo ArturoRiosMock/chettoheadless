@@ -48,7 +48,18 @@ modules/chettoheadless/views/img/categories/
 modules/chettoheadless/views/img/products/
 modules/chettoheadless/views/img/sections/
 
+# PrestaShop migration snapshots (fase 0)
+/migration_snapshots/
+
 # cursor
 .cursor/
 
 .vercel
+
+# local artifacts (dumps, logs, working copies)
+/.tmp/
+/logs/
+/tools/
+/prestashop/
+/rumenclade.md
+/scripts/_*.txt
