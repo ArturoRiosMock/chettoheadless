@@ -27,7 +27,20 @@ class ChettoHeadless extends Module
     {
         return parent::install()
             && $this->executeSqlFile('install')
-            && $this->installTabs();
+            && $this->installTabs()
+            && $this->ensureCartSyncToken();
+    }
+
+    /**
+     * Token compartido con Next (PRESTASHOP_CART_SYNC_TOKEN) para enlazar carrito webservice -> cookie FO.
+     */
+    private function ensureCartSyncToken()
+    {
+        if (!Configuration::get('CHETTO_HEADLESS_CART_TOKEN')) {
+            Configuration::updateValue('CHETTO_HEADLESS_CART_TOKEN', 'chetto_cart_sync_dev_change_me');
+        }
+
+        return true;
     }
 
     public function uninstall()
@@ -105,8 +118,13 @@ class ChettoHeadless extends Module
             'AdminChettoPorqueBarefoot' => ['parent' => 'AdminChettoBfParent', 'name' => 'Secciones editables'],
             'AdminChettoCollections' => ['parent' => 'AdminChettoCollParent', 'name' => 'Pagina y Tarjetas'],
             'AdminChettoFooter'      => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Footer y Newsletter'],
+            'AdminChettoNav'         => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Menu principal'],
+            'AdminChettoFooterLinks' => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Enlaces footer'],
             'AdminChettoContent'     => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Bloques de Contenido'],
             'AdminChettoFaq'         => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Pagina FAQ'],
+            'AdminChettoPageBlocks'  => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Bloques paginas info'],
+            'AdminChettoStores'      => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Tiendas'],
+            'AdminChettoProductOverlay' => ['parent' => 'AdminChettoProductParent', 'name' => 'Overlays PDP'],
             'AdminChettoInfoPages'   => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Paginas Info'],
             'AdminChettoExtraPages'  => ['parent' => 'AdminChettoGlobalParent', 'name' => 'Paginas Extra'],
         ];
@@ -141,8 +159,13 @@ class ChettoHeadless extends Module
             'AdminChettoWhyBarefoot',
             'AdminChettoCollections',
             'AdminChettoFooter',
+            'AdminChettoNav',
+            'AdminChettoFooterLinks',
             'AdminChettoTestimonials',
             'AdminChettoContent',
+            'AdminChettoPageBlocks',
+            'AdminChettoStores',
+            'AdminChettoProductOverlay',
             'AdminChettoInfoPages',
             'AdminChettoExtraPages',
             'AdminChettoFaq',
@@ -232,6 +255,10 @@ class ChettoHeadless extends Module
             'CHETTO_FOOTER_PHONE',
             'CHETTO_FOOTER_EMAIL',
             'CHETTO_FOOTER_LOCATION',
+            'CHETTO_HEADER_LOGO',
+            'CHETTO_FOOTER_LOGO',
+            'CHETTO_SEARCH_PLACEHOLDER',
+            'CHETTO_HEADLESS_CART_TOKEN',
         ];
     }
 
@@ -287,6 +314,22 @@ class ChettoHeadless extends Module
             return '';
         }
         return _PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/chettoheadless/views/img/sections/' . $filename;
+    }
+
+    public static function getHeaderLogoUrl($filename)
+    {
+        if (empty($filename)) {
+            return '';
+        }
+        return _PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/chettoheadless/views/img/header/' . $filename;
+    }
+
+    public static function getFooterLogoUrl($filename)
+    {
+        if (empty($filename)) {
+            return '';
+        }
+        return _PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/chettoheadless/views/img/header/' . $filename;
     }
 
     private function renderConfigForm()

@@ -13,22 +13,25 @@ services:
 
   prestashop:
     container_name: chetto-prestashop
-    image: prestashop/prestashop:latest
+    # Alinear con dump de producción (evitar migraciones cruzadas con :latest).
+    image: prestashop/prestashop:9.0.3
     restart: unless-stopped
     depends_on:
       - mysql
     ports:
-      - 8080:80
+      # 8090 si 8080 está ocupado por otro stack (p. ej. chettobk)
+      - 8090:80
     environment:
       DB_SERVER: chetto-mysql
       DB_NAME: prestashop
       DB_USER: root
       DB_PASSWD: admin
       PS_INSTALL_AUTO: 1
-      PS_DOMAIN: localhost:8080
+      PS_DOMAIN: localhost:8090
       PS_LANGUAGE: es
       PS_COUNTRY: es
-      PS_DEMO_MODE: 1
+      # 0 = back office permite guardar (webservice, rendimiento, etc.). 1 activa restricciones "demo".
+      PS_DEMO_MODE: 0
       PS_DEV_MODE: 1
       ADMIN_MAIL: admin@chetto.es
       ADMIN_PASSWD: Chetto2026!
@@ -40,6 +43,8 @@ services:
       - psdata:/var/www/html
       - ./scripts:/var/www/html/scripts
       - ./modules/chettoheadless:/var/www/html/modules/chettoheadless
+      # Override Employee::getDefaultShopID (cookie shopContext / employee_shop inconsistente)
+      - ./prestashop/override/classes:/var/www/html/override/classes
 
   phpmyadmin:
     container_name: chetto-phpmyadmin
@@ -51,6 +56,8 @@ services:
       PMA_HOST: chetto-mysql
       PMA_PORT: 3306
       PMA_ARBITRARY: 1
+      # Sube el límite respecto al valor por defecto (~2 MB) para imports grandes por la web
+      UPLOAD_LIMIT: 512M
     ports:
       - 8081:80
     networks:

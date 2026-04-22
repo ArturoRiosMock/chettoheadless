@@ -8,11 +8,24 @@ require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoContentBlock.php';
 require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoHomepageProduct.php';
 require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoNewsletter.php';
 require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoCollection.php';
+require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoNavItem.php';
+require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoFooterLink.php';
+require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoFaq.php';
+require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoPageBlock.php';
+require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoStore.php';
+require_once _PS_MODULE_DIR_ . 'chettoheadless/classes/ChettoProductOverlay.php';
 
 class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
 {
     public function initContent()
     {
+        $action = Tools::getValue('action');
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'recover_cart') {
+            $this->handleRecoverCart();
+
+            return;
+        }
+
         parent::initContent();
 
         header('Content-Type: application/json; charset=utf-8');
@@ -31,6 +44,19 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
             return;
         }
 
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && $action === 'product_overlay') {
+            $idProduct = (int) Tools::getValue('id_product');
+            $row = ChettoProductOverlay::getByProductId($idProduct);
+            echo json_encode(
+                $row ? [
+                    'id_product' => (int) $row['id_product'],
+                    'marketing_html' => $row['marketing_html'] ?? '',
+                ] : ['id_product' => $idProduct, 'marketing_html' => ''],
+                JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+            );
+            exit;
+        }
+
         $data = [
             'slides' => $this->getSlides(),
             'benefits' => $this->getBenefits(),
@@ -44,11 +70,67 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
             'collections' => $this->getCollections(),
             'featured_products' => $this->getHomepageProducts('featured'),
             'favorites_products' => $this->getHomepageProducts('favorites'),
+            'nav_items' => $this->getNavItems(),
+            'footer_columns' => $this->getFooterColumns(),
+            'faq_categories' => $this->getFaqCategories(),
+            'page_blocks' => $this->getPageBlocksGrouped(),
+            'stores' => $this->getStores(),
             'config' => $this->getConfig(),
         ];
 
         echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         exit;
+    }
+
+    /**
+     * Asocia un carrito creado vía webservice a la sesión del navegador (cookie PrestaShop)
+     * y redirige al carrito nativo. Token = hash_hmac('sha256', id_cart, CHETTO_HEADLESS_CART_TOKEN).
+     */
+    private function handleRecoverCart()
+    {
+        $id_cart = (int) Tools::getValue('id_cart');
+        $token = (string) Tools::getValue('token', '');
+        $secret = (string) Configuration::get('CHETTO_HEADLESS_CART_TOKEN');
+        $expected = $secret !== '' ? hash_hmac('sha256', (string) $id_cart, $secret) : '';
+
+        if ($id_cart <= 0 || $secret === '' || !hash_equals($expected, $token)) {
+            Tools::redirect(Context::getContext()->link->getPageLink('index', true));
+
+            return;
+        }
+
+        $cart = new Cart($id_cart);
+        if (!Validate::isLoadedObject($cart)) {
+            Tools::redirect(Context::getContext()->link->getPageLink('index', true));
+
+            return;
+        }
+
+        $context = Context::getContext();
+        if (!(int) $context->cookie->id_guest) {
+            Guest::setNewGuest($context->cookie);
+        }
+
+        $cart->id_guest = (int) $context->cookie->id_guest;
+        if ((int) $cart->id_shop <= 0) {
+            $cart->id_shop = (int) $context->shop->id;
+        }
+        if ((int) $cart->id_shop_group <= 0) {
+            $cart->id_shop_group = (int) $context->shop->id_shop_group;
+        }
+        if ((int) $cart->id_lang <= 0) {
+            $cart->id_lang = (int) $context->language->id;
+        }
+        if (empty($cart->secure_key)) {
+            $cart->secure_key = md5(uniqid((string) mt_rand(), true));
+        }
+        $cart->update();
+
+        $context->cookie->id_cart = (int) $id_cart;
+        $context->cookie->write();
+        $context->cart = $cart;
+
+        Tools::redirect($context->link->getPageLink('cart', true));
     }
 
     private function handleNewsletter()
@@ -236,6 +318,129 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
         return $collections;
     }
 
+    private function getNavItems()
+    {
+        $rows = ChettoNavItem::getAll();
+        $out = [];
+        foreach ($rows as $row) {
+            $out[] = [
+                'id' => (int) $row['id_chetto_nav_item'],
+                'label' => $row['label'],
+                'href' => $row['href'],
+            ];
+        }
+
+        return $out;
+    }
+
+    private function getFooterColumns()
+    {
+        $rows = ChettoFooterLink::getAll();
+        $byCol = [1 => ['title' => '', 'links' => []], 2 => ['title' => '', 'links' => []], 3 => ['title' => '', 'links' => []]];
+
+        foreach ($rows as $row) {
+            $idx = (int) $row['column_index'];
+            if ($idx < 1 || $idx > 3) {
+                continue;
+            }
+            if (!empty($row['column_title'])) {
+                $byCol[$idx]['title'] = $row['column_title'];
+            }
+            $byCol[$idx]['links'][] = ['label' => $row['label'], 'href' => $row['href']];
+        }
+
+        $out = [];
+        foreach ([1, 2, 3] as $i) {
+            if (!empty($byCol[$i]['links'])) {
+                $out[] = [
+                    'title' => $byCol[$i]['title'] ?: ('Columna ' . $i),
+                    'links' => $byCol[$i]['links'],
+                ];
+            }
+        }
+
+        return $out;
+    }
+
+    private function getFaqCategories()
+    {
+        $rows = ChettoFaq::getAllGrouped();
+        $byCat = [];
+
+        foreach ($rows as $row) {
+            $cat = $row['category'];
+            if (!isset($byCat[$cat])) {
+                $byCat[$cat] = [];
+            }
+            $byCat[$cat][] = [
+                'id' => (int) $row['id_chetto_faq'],
+                'question' => $row['question'],
+                'answer' => $row['answer'],
+            ];
+        }
+
+        $out = [];
+        foreach ($byCat as $category => $items) {
+            $out[] = ['category' => $category, 'items' => $items];
+        }
+
+        return $out;
+    }
+
+    private function getPageBlocksGrouped()
+    {
+        $rows = ChettoPageBlock::getAllByPage();
+        $grouped = [];
+
+        foreach ($rows as $row) {
+            $key = $row['page_key'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [];
+            }
+
+            $meta = null;
+            if (!empty($row['meta_json'])) {
+                $decoded = json_decode($row['meta_json'], true);
+                $meta = is_array($decoded) ? $decoded : null;
+            }
+
+            $grouped[$key][] = [
+                'id' => (int) $row['id_chetto_page_block'],
+                'block_key' => $row['block_key'] ?? '',
+                'title' => $row['title'],
+                'body' => $row['body'] ?? '',
+                'image' => ChettoPageBlock::getImageUrl($row['image'] ?? ''),
+                'meta' => $meta,
+                'position' => (int) $row['position'],
+            ];
+        }
+
+        return $grouped;
+    }
+
+    private function getStores()
+    {
+        $rows = ChettoStore::getAll();
+        $stores = [];
+
+        foreach ($rows as $row) {
+            $line2 = $row['address_line2'] ?? '';
+            $address = trim($row['address_line1'] . ($line2 !== '' ? ', ' . $line2 : ''));
+            $stores[] = [
+                'id' => (int) $row['id_chetto_store'],
+                'name' => $row['name'],
+                'address' => $address,
+                'address_line1' => $row['address_line1'],
+                'address_line2' => $line2,
+                'phone' => $row['phone'] ?? '',
+                'maps_query' => $row['maps_query'] ?? $address,
+                'image' => ChettoStore::getImageUrl($row['image'] ?? ''),
+            ];
+        }
+
+        return $stores;
+    }
+
     private function getConfig()
     {
         $stats = [];
@@ -253,6 +458,9 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
             }
             return _PS_BASE_URL_ . __PS_BASE_URI__ . 'modules/chettoheadless/views/img/sections/' . $filename;
         };
+
+        $headerLogoFile = Configuration::get('CHETTO_HEADER_LOGO');
+        $footerLogoFile = Configuration::get('CHETTO_FOOTER_LOGO');
 
         return [
             'newsletter_title' => Configuration::get('CHETTO_NEWSLETTER_TITLE') ?: '',
@@ -366,6 +574,9 @@ class ChettoHeadlessApiModuleFrontController extends ModuleFrontController
             'stores_title' => Configuration::get('CHETTO_STORES_TITLE') ?: 'Mapa de tiendas',
             'about_cta_title' => Configuration::get('CHETTO_ABOUT_CTA_TITLE') ?: '¡Ojalá te enamores de Chetto tanto como lo estamos nosotros!',
             'about_cta_desc' => Configuration::get('CHETTO_ABOUT_CTA_DESC') ?: 'Descubre nuestra colección de calzado barefoot para niños',
+            'header_logo_url' => ChettoHeadless::getHeaderLogoUrl($headerLogoFile),
+            'footer_logo_url' => ChettoHeadless::getFooterLogoUrl($footerLogoFile),
+            'search_placeholder' => Configuration::get('CHETTO_SEARCH_PLACEHOLDER') ?: 'Buscar zapatos barefoot, botas, sneakers...',
         ];
     }
 }

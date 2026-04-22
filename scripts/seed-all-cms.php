@@ -190,6 +190,130 @@ if ($count === 0) {
 }
 
 // ============================================================
+// 5b. NAV, FOOTER, FAQ, TIENDAS (requiere migrate-chetto-cms-v2.sql / install.sql actualizado)
+// ============================================================
+$extendedNav = $db->executeS("SHOW TABLES LIKE '{$prefix}chetto_nav_item'");
+if (!empty($extendedNav)) {
+    $countNav = (int) $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_nav_item`");
+    if ($countNav === 0) {
+        $navRows = [
+            ['label' => 'Novedades', 'href' => '/colecciones/novedades', 'position' => 1],
+            ['label' => 'Botas/Botines', 'href' => '/colecciones/botas', 'position' => 2],
+            ['label' => 'Sneakers', 'href' => '/colecciones/sneakers', 'position' => 3],
+            ['label' => 'Sandalias', 'href' => '/colecciones/sandalias', 'position' => 4],
+            ['label' => 'Casual / Classic', 'href' => '/colecciones/casual', 'position' => 5],
+            ['label' => '¿Porqué Barefoot?', 'href' => '/porque-barefoot', 'position' => 6],
+            ['label' => 'Ofertas', 'href' => '/ofertas', 'position' => 7],
+        ];
+        foreach ($navRows as $n) {
+            $db->insert('chetto_nav_item', [
+                'label' => pSQL($n['label']),
+                'href' => pSQL($n['href']),
+                'position' => (int) $n['position'],
+                'active' => 1,
+                'date_add' => $now,
+                'date_upd' => $now,
+            ]);
+        }
+        echo 'Nav items seeded: ' . count($navRows) . "\n";
+    } else {
+        echo "Nav items already exist ($countNav)\n";
+    }
+
+    $countFoot = (int) $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_footer_link`");
+    if ($countFoot === 0) {
+        $footerRows = [
+            [1, 'Compra', 'Novedades', '/colecciones/novedades', 1],
+            [1, 'Compra', 'Botas', '/colecciones/botas', 2],
+            [1, 'Compra', 'Sneakers', '/colecciones/sneakers', 3],
+            [1, 'Compra', 'Sandalias', '/colecciones/sandalias', 4],
+            [1, 'Compra', 'Casual / Classic', '/colecciones/casual', 5],
+            [1, 'Compra', 'Ofertas', '/ofertas', 6],
+            [2, 'Información', '¿Qué es barefoot?', '/porque-barefoot', 1],
+            [2, 'Información', 'Guía de tallas', '/guia-tallas', 2],
+            [2, 'Información', 'Materiales', '/materiales', 3],
+            [2, 'Información', 'Cuidado del calzado', '/cuidado-calzado', 4],
+            [2, 'Información', 'Política de cambios', '/politica-cambios', 5],
+            [2, 'Información', 'Envíos y devoluciones', '/envios-devoluciones', 6],
+            [3, 'Ayuda', 'Contacto', '/contacto', 1],
+            [3, 'Ayuda', 'Tiendas', '/tiendas', 2],
+            [3, 'Ayuda', 'FAQ', '/faq', 3],
+            [3, 'Ayuda', 'Mi cuenta', '/cuenta', 4],
+            [3, 'Ayuda', 'Estado del pedido', '/pedidos', 5],
+            [3, 'Ayuda', 'Atención al cliente', '/atencion', 6],
+        ];
+        foreach ($footerRows as $r) {
+            $db->insert('chetto_footer_link', [
+                'column_index' => (int) $r[0],
+                'column_title' => pSQL($r[1]),
+                'label' => pSQL($r[2]),
+                'href' => pSQL($r[3]),
+                'position' => (int) $r[4],
+                'active' => 1,
+                'date_add' => $now,
+                'date_upd' => $now,
+            ]);
+        }
+        echo 'Footer links seeded: ' . count($footerRows) . "\n";
+    } else {
+        echo "Footer links already exist ($countFoot)\n";
+    }
+
+    $countFaq = (int) $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_faq`");
+    if ($countFaq === 0) {
+        $faqRows = [
+            ['Pedidos y Envíos', '¿Cuánto tarda en llegar mi pedido?', 'Los pedidos se envían en 24-48 horas laborables.', 1],
+            ['Pedidos y Envíos', '¿Cuánto cuesta el envío?', 'El envío es gratuito para pedidos superiores a 50€ en España peninsular.', 2],
+            ['Devoluciones y Cambios', '¿Cuál es la política de devoluciones?', 'Dispones de 30 días desde la recepción del pedido para realizar una devolución.', 1],
+            ['Productos y Tallas', '¿Cómo sé qué talla necesito?', 'Mide el pie de tu hijo en centímetros y consulta nuestra guía de tallas.', 1],
+        ];
+        foreach ($faqRows as $f) {
+            $db->insert('chetto_faq', [
+                'category' => pSQL($f[0]),
+                'question' => pSQL($f[1]),
+                'answer' => pSQL($f[2], true),
+                'position' => (int) $f[3],
+                'active' => 1,
+                'date_add' => $now,
+                'date_upd' => $now,
+            ]);
+        }
+        echo 'FAQ sample seeded: ' . count($faqRows) . " (amplía desde Admin)\n";
+    } else {
+        echo "FAQ already exist ($countFaq)\n";
+    }
+
+    $countStore = (int) $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_store`");
+    if ($countStore === 0) {
+        $storeRows = [
+            ['Chetto Madrid Centro', 'Calle Gran Vía, 123, 28013 Madrid', '', '+34 910 123 456', 'Calle Gran Vía 123, 28013 Madrid', 1],
+            ['Chetto Barcelona', 'Passeig de Gràcia, 89, 08008 Barcelona', '', '+34 930 456 789', 'Passeig de Gràcia 89, 08008 Barcelona', 2],
+            ['Chetto Valencia', 'Calle Colón, 45, 46004 Valencia', '', '+34 960 789 012', 'Calle Colón 45, 46004 Valencia', 3],
+            ['Chetto Sevilla', 'Avenida de la Constitución, 12, 41001 Sevilla', '', '+34 950 345 678', 'Avenida de la Constitución 12, 41001 Sevilla', 4],
+        ];
+        foreach ($storeRows as $s) {
+            $db->insert('chetto_store', [
+                'name' => pSQL($s[0]),
+                'address_line1' => pSQL($s[1]),
+                'address_line2' => pSQL($s[2]),
+                'phone' => pSQL($s[3]),
+                'maps_query' => pSQL($s[4]),
+                'image' => '',
+                'position' => (int) $s[5],
+                'active' => 1,
+                'date_add' => $now,
+                'date_upd' => $now,
+            ]);
+        }
+        echo 'Stores seeded: ' . count($storeRows) . "\n";
+    } else {
+        echo "Stores already exist ($countStore)\n";
+    }
+} else {
+    echo "Tablas extendidas no instaladas — ejecuta scripts/migrate-chetto-cms-v2.php o reinstala el módulo.\n";
+}
+
+// ============================================================
 // 6. CONFIGURACIÓN GENERAL
 // ============================================================
 $configs = [
@@ -235,6 +359,7 @@ $configs = [
     'CHETTO_ANNOUNCE_STORES_URL' => '/tiendas',
     'CHETTO_TESTIMONIALS_TITLE' => 'Familias Felices',
     'CHETTO_TESTIMONIALS_SUBTITLE' => 'Lo que dicen nuestros clientes sobre el calzado barefoot',
+    'CHETTO_SEARCH_PLACEHOLDER' => 'Buscar zapatos barefoot, botas, sneakers...',
 ];
 
 $configCount = 0;
@@ -254,5 +379,11 @@ echo "Categories:      " . $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_
 echo "Products:        " . $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_homepage_product`") . "\n";
 echo "Testimonials:    " . $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_testimonial`") . "\n";
 echo "Content blocks:  " . $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_content_block`") . "\n";
+if (!empty($extendedNav)) {
+    echo "Nav items:       " . $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_nav_item`") . "\n";
+    echo "Footer links:    " . $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_footer_link`") . "\n";
+    echo "FAQ:             " . $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_faq`") . "\n";
+    echo "Stores:          " . $db->getValue("SELECT COUNT(*) FROM `{$prefix}chetto_store`") . "\n";
+}
 echo "========================\n";
 echo "ALL DONE!\n";

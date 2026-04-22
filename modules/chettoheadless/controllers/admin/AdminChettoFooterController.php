@@ -11,6 +11,7 @@ class AdminChettoFooterController extends ModuleAdminController
         'CHETTO_FOOTER_PHONE',
         'CHETTO_FOOTER_EMAIL',
         'CHETTO_FOOTER_LOCATION',
+        'CHETTO_SEARCH_PLACEHOLDER',
     ];
 
     public function __construct()
@@ -42,6 +43,28 @@ class AdminChettoFooterController extends ModuleAdminController
         foreach ($this->configKeys as $key) {
             Configuration::updateValue($key, Tools::getValue($key));
         }
+
+        $dir = _PS_MODULE_DIR_ . 'chettoheadless/views/img/header/';
+        if (!is_dir($dir)) {
+            mkdir($dir, 0755, true);
+        }
+
+        if (isset($_FILES['CHETTO_HEADER_LOGO_FILE']) && $_FILES['CHETTO_HEADER_LOGO_FILE']['size'] > 0) {
+            $ext = strtolower(pathinfo($_FILES['CHETTO_HEADER_LOGO_FILE']['name'], PATHINFO_EXTENSION));
+            $filename = 'header-' . time() . '.' . $ext;
+            if (move_uploaded_file($_FILES['CHETTO_HEADER_LOGO_FILE']['tmp_name'], $dir . $filename)) {
+                Configuration::updateValue('CHETTO_HEADER_LOGO', $filename);
+            }
+        }
+
+        if (isset($_FILES['CHETTO_FOOTER_LOGO_FILE']) && $_FILES['CHETTO_FOOTER_LOGO_FILE']['size'] > 0) {
+            $ext = strtolower(pathinfo($_FILES['CHETTO_FOOTER_LOGO_FILE']['name'], PATHINFO_EXTENSION));
+            $filename = 'footer-' . time() . '.' . $ext;
+            if (move_uploaded_file($_FILES['CHETTO_FOOTER_LOGO_FILE']['tmp_name'], $dir . $filename)) {
+                Configuration::updateValue('CHETTO_FOOTER_LOGO', $filename);
+            }
+        }
+
         $this->confirmations[] = 'Configuración del Footer guardada correctamente.';
     }
 
@@ -59,7 +82,33 @@ class AdminChettoFooterController extends ModuleAdminController
 
     private function renderConfigForm()
     {
+        $headerLogoHtml = '';
+        $headerLogo = Configuration::get('CHETTO_HEADER_LOGO');
+        if ($headerLogo) {
+            $url = ChettoHeadless::getHeaderLogoUrl($headerLogo);
+            $headerLogoHtml = '<br><strong>Logo cabecera actual:</strong><br><img src="' . htmlspecialchars($url) . '" style="max-height:80px;margin-top:5px;" />';
+        }
+
+        $footerLogoHtml = '';
+        $footerLogo = Configuration::get('CHETTO_FOOTER_LOGO');
+        if ($footerLogo) {
+            $url = ChettoHeadless::getFooterLogoUrl($footerLogo);
+            $footerLogoHtml = '<br><strong>Logo footer actual:</strong><br><img src="' . htmlspecialchars($url) . '" style="max-height:64px;margin-top:5px;" />';
+        }
+
         $forms = [];
+        $forms[] = [
+            'form' => [
+                'legend' => ['title' => 'Cabecera (Next.js)', 'icon' => 'icon-picture'],
+                'description' => 'Logo del header y texto del buscador. Los enlaces del menú y columnas del footer se gestionan en Menu principal y Enlaces footer.',
+                'input' => [
+                    ['type' => 'file', 'label' => 'Logo cabecera', 'name' => 'CHETTO_HEADER_LOGO_FILE', 'desc' => 'PNG/SVG/JPG recomendado.' . $headerLogoHtml],
+                    ['type' => 'file', 'label' => 'Logo footer (marca)', 'name' => 'CHETTO_FOOTER_LOGO_FILE', 'desc' => 'Opcional. Sustituye el logo estático del footer.' . $footerLogoHtml],
+                    ['type' => 'text', 'label' => 'Placeholder del buscador', 'name' => 'CHETTO_SEARCH_PLACEHOLDER', 'desc' => 'Ej: Buscar zapatos barefoot, botas...'],
+                ],
+                'submit' => ['title' => 'Guardar'],
+            ],
+        ];
         $forms[] = [
             'form' => [
                 'legend' => ['title' => 'Newsletter — Configuración', 'icon' => 'icon-envelope'],

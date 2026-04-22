@@ -65,8 +65,12 @@ if ($webserviceKey->save()) {
         Db::getInstance()->execute($sql);
     }
 
-    // Also add POST/PUT for carts and orders (needed for checkout)
-    $writeResources = ['carts', 'orders', 'customers', 'addresses'];
+    // POST/PUT: checkout + migración vía API (fabricantes, categorías, catálogo…)
+    $writeResources = [
+        'carts', 'orders', 'order_details', 'customers', 'addresses',
+        'manufacturers', 'categories', 'products', 'combinations',
+        'stock_availables', 'images', 'product_option_values', 'product_options',
+    ];
     $writeMethods = ['POST', 'PUT'];
     
     foreach ($writeResources as $resource) {

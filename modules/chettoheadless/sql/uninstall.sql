@@ -1,6 +1,14 @@
+DROP TABLE IF EXISTS `PREFIX_chetto_product_overlay`;
+DROP TABLE IF EXISTS `PREFIX_chetto_store`;
+DROP TABLE IF EXISTS `PREFIX_chetto_page_block`;
+DROP TABLE IF EXISTS `PREFIX_chetto_faq`;
+DROP TABLE IF EXISTS `PREFIX_chetto_footer_link`;
+DROP TABLE IF EXISTS `PREFIX_chetto_nav_item`;
 DROP TABLE IF EXISTS `PREFIX_chetto_slide`;
 DROP TABLE IF EXISTS `PREFIX_chetto_benefit`;
 DROP TABLE IF EXISTS `PREFIX_chetto_homepage_category`;
 DROP TABLE IF EXISTS `PREFIX_chetto_testimonial`;
 DROP TABLE IF EXISTS `PREFIX_chetto_content_block`;
+DROP TABLE IF EXISTS `PREFIX_chetto_newsletter`;
+DROP TABLE IF EXISTS `PREFIX_chetto_collection`;
 DROP TABLE IF EXISTS `PREFIX_chetto_homepage_product`;
